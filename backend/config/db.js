@@ -24,7 +24,7 @@ const getDatabaseConnection = () => {
       "Banco de dados não inicializado, chame connectionDB primeiro"
     );
   }
-  return pool.promisse();
+  return pool.promise();
 };
 
 connectionDB();
