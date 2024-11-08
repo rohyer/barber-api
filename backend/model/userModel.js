@@ -27,6 +27,20 @@ const UserModel = {
     } catch (error) {
       throw error;
     }
+  },
+
+  async getUserById(id) {
+    const db = getDatabaseConnection();
+
+    try {
+      const [result] = await db.execute(
+        "SELECT * FROM admin WHERE id = ? LIMIT 1",
+        [id]
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
