@@ -1,4 +1,6 @@
-const registerUser = (req, res) => {
+const asyncHandler = require("express-async-handler");
+
+const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, state, city, phone } = req.body;
 
   if (!name || !email || !password || !state || !city || !phone) {
@@ -6,8 +8,8 @@ const registerUser = (req, res) => {
     throw new Error("Por favor, preencha todos os campos corretamente");
   }
 
-  res.json({ name, email, password, state, city, phone });
-};
+  await res.json({ name, email, password, state, city, phone });
+});
 
 const loginUser = (req, res) => {
   res.send("Rota de login");
