@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const UserModel = require("../model/userModel");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, password2, city, state, phone } = req.body;
@@ -39,7 +40,11 @@ const registerUser = asyncHandler(async (req, res) => {
       phone
     );
     res.status(201);
-    res.json({ message: "Usuário criado", userId: result.insertId });
+    res.json({
+      message: "Usuário criado",
+      userId: result.insertId,
+      token: generateToken(result.insertId)
+    });
   } catch (error) {
     res.status(500);
     res.json({ message: "Erro ao criar usuário", error });
@@ -68,12 +73,16 @@ const loginUser = asyncHandler(async (req, res) => {
     userExists.length > 0 &&
     (await bcrypt.compare(password, userExists[0].password))
   ) {
-    res.json({ ...userExists[0] });
+    res.json({ ...userExists[0], token: generateToken(userExists[0].id) });
   } else {
     res.status(400);
     throw new Error("Acessos incorretos");
   }
 });
+
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET);
+};
 
 module.exports = {
   registerUser,
