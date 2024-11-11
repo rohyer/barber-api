@@ -45,7 +45,39 @@ const setService = asyncHandler(async (req, res) => {
   }
 });
 
+// Atualiza um serviços
+const updateService = asyncHandler(async (req, res) => {
+  const { name, value } = req.body;
+
+  if (!req.params.id) {
+    res.status(400);
+    throw new Error("Requisição sem id");
+  }
+
+  if (!name || !value) {
+    res.status(400);
+    throw new Error("Por favor, preencha os campos");
+  }
+
+  const service = await ServiceModel.getServiceById(req.params.id);
+
+  if (service && service[0].id_admin === req.user.id) {
+    const updateService = await ServiceModel.updateService(
+      req.params.id,
+      name,
+      value
+    );
+    res.status(200);
+    res.json({ updateService });
+    // Devo retornar um SELECT ??
+  } else {
+    res.status(400);
+    throw new Error("Erro ao atualizar o serviço");
+  }
+});
+
 module.exports = {
   getServices,
-  setService
+  setService,
+  updateService
 };
