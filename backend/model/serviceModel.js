@@ -29,6 +29,20 @@ const ServiceModel = {
     }
   },
 
+  async getServiceById(id) {
+    const db = getDatabaseConnection();
+
+    try {
+      const [result] = await db.execute(
+        "SELECT * FROM service WHERE id = ? LIMIT 1",
+        [id]
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   async getServices(idAdmin) {
     const db = getDatabaseConnection();
 
@@ -36,6 +50,20 @@ const ServiceModel = {
       const [result] = await db.execute(
         "SELECT * FROM service WHERE id_admin = ?",
         [idAdmin]
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async updateService(id, name, value) {
+    const db = getDatabaseConnection();
+
+    try {
+      const [result] = await db.execute(
+        "UPDATE service SET name = ?, value = ? WHERE id = ? LIMIT 1",
+        [name, value, id]
       );
       return result;
     } catch (error) {
