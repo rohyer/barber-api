@@ -4,13 +4,13 @@ const { protect } = require("../middleware/authMiddleware");
 const {
   getServices,
   setService,
-  updateServices
+  updateService
 } = require("../controllers/serviceController");
 
 router.get("/", protect, getServices);
 
 router.post("/", setService);
 
-router.put("/:id", protect, updateServices);
+router.put("/:id", protect, updateService);
 
 module.exports = router;
