@@ -1,19 +1,21 @@
 const asyncHandler = require("express-async-handler");
 const ServiceModel = require("../model/serviceModel");
 
-// Pega todos os serviços de determinado usuário
+/**
+ * @description Get services
+ * @route       GET /api/services
+ * @access      Private
+ */
 const getServices = asyncHandler(async (req, res) => {
-  try {
-    const result = await ServiceModel.getServices(req.user.id);
-    res.status(200);
-    res.json({ result });
-  } catch (error) {
-    res.status(400);
-    throw new Error(error);
-  }
+  const result = await ServiceModel.getServices(req.user.id);
+  res.status(200).json({ result });
 });
 
-// Cria um serviço
+/**
+ * @description Set services
+ * @route       POST /api/services
+ * @access      Private
+ */
 const setService = asyncHandler(async (req, res) => {
   const { name, value, idAdmin } = req.body;
 
@@ -32,20 +34,18 @@ const setService = asyncHandler(async (req, res) => {
   }
 
   // Faz o cadastro no Banco de Dados
-  try {
-    const result = await ServiceModel.createService(name, value, idAdmin);
-    res.status(201);
-    res.json({
-      message: "Serviço criado",
-      id: result.insertId
-    });
-  } catch (error) {
-    res.status(500);
-    throw new Error(error);
-  }
+  const result = await ServiceModel.createService(name, value, idAdmin);
+  res.status(201).json({
+    message: "Serviço criado",
+    id: result.insertId
+  });
 });
 
-// Atualiza um serviço
+/**
+ * @description Update services
+ * @route       PUT /api/services/:id
+ * @access      Private
+ */
 const updateService = asyncHandler(async (req, res) => {
   const service = await ServiceModel.getServiceById(req.params.id);
 
@@ -73,7 +73,11 @@ const updateService = asyncHandler(async (req, res) => {
   res.json(updatedService);
 });
 
-// Deleta um serviço
+/**
+ * @description Delete services
+ * @route       DELETE /api/services/:id
+ * @access      Private
+ */
 const deleteService = asyncHandler(async (req, res) => {
   const service = await ServiceModel.getServiceById(req.params.id);
 
