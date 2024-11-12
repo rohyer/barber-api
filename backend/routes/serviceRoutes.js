@@ -10,7 +10,7 @@ const {
 
 router.get("/", protect, getServices);
 
-router.post("/", setService);
+router.post("/", protect, setService);
 
 router.put("/:id", protect, updateService);
 
