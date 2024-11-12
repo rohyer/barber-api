@@ -69,6 +69,19 @@ const ServiceModel = {
     } catch (error) {
       throw error;
     }
+  },
+
+  async deleteService(id) {
+    const db = getDatabaseConnection();
+
+    try {
+      const [result] = await db.execute("DELETE FROM service WHERE id = ?", [
+        id
+      ]);
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
