@@ -47,33 +47,30 @@ const setService = asyncHandler(async (req, res) => {
 
 // Atualiza um serviço
 const updateService = asyncHandler(async (req, res) => {
-  const { name, value } = req.body;
-
-  if (!req.params.id) {
-    res.status(400);
-    throw new Error("Requisição sem id");
-  }
-
-  if (!name || !value) {
-    res.status(400);
-    throw new Error("Por favor, preencha os campos");
-  }
-
   const service = await ServiceModel.getServiceById(req.params.id);
 
-  if (service && service[0].id_admin === req.user.id) {
-    const updatedService = await ServiceModel.updateService(
-      req.params.id,
-      name,
-      value
-    );
-    res.status(200);
-    res.json({ updatedService });
-    // Devo retornar um SELECT ??
-  } else {
+  if (service.length === 0) {
     res.status(400);
-    throw new Error("Erro ao atualizar o serviço");
+    throw new Error("Serviço não encontrado");
   }
+
+  if (!req.user) {
+    res.status(400);
+    throw new Error("Usuário não encontrado");
+  }
+
+  if (service[0].id_admin !== req.user.id) {
+    res.status(400);
+    throw new Error("Usuário não autorizado");
+  }
+
+  const updatedService = await ServiceModel.updateService(
+    req.body.name,
+    req.body.value,
+    req.params.id
+  );
+  res.status(200);
+  res.json(updatedService);
 });
 
 // Deleta um serviço

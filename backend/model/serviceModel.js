@@ -57,7 +57,7 @@ const ServiceModel = {
     }
   },
 
-  async updateService(id, name, value) {
+  async updateService(name, value, id) {
     const db = getDatabaseConnection();
 
     try {
