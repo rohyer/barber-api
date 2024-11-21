@@ -81,8 +81,38 @@ const updateEmployee = asyncHandler(async (req, res) => {
   res.json(updatedEmployee);
 });
 
+/**
+ * @description Delete Employee
+ * @route delete /api/employees/:id
+ * @access Private
+ */
+const deleteEmployee = asyncHandler(async (req, res) => {
+  const employeeExists = await EmployeeModel.getEmployeeById(req.params.id);
+
+  if (employeeExists.length === 0) {
+    res.status(400);
+    throw new Error("Colaborador não encontrado!");
+  }
+
+  if (!req.user) {
+    res.status(400);
+    throw new Error("Usuário não encontrado");
+  }
+
+  if (employeeExists[0].id_admin !== req.user.id) {
+    res.status(400);
+    throw new Error("Usuário não autorizado!");
+  }
+
+  const deletedEmployee = await EmployeeModel.deleteEmployee(req.params.id);
+
+  res.status(200);
+  res.json(deletedEmployee);
+});
+
 module.exports = {
   getEmployees,
   setEmployee,
-  updateEmployee
+  updateEmployee,
+  deleteEmployee
 };
