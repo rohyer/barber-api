@@ -15,4 +15,6 @@ app.use("/api/users", require("./routes/userRoutes"));
 
 app.use("/api/services", require("./routes/serviceRoutes"));
 
+app.use("/api/employees", require("./routes/employeeRoutes"));
+
 app.listen(port, () => console.log(`Server started on port ${port}`));
