@@ -90,6 +90,8 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
+// const updateUser = asyncHandler(async (req, res) => {});
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET);
 };
