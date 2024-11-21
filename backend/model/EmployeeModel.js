@@ -55,6 +55,19 @@ const EmployeeModel = {
     } catch (error) {
       throw error;
     }
+  },
+
+  async deleteEmployee(id) {
+    const db = getDatabaseConnection();
+
+    try {
+      const [result] = await db.execute("DELETE FROM employee WHERE id = ?", [
+        id
+      ]);
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
