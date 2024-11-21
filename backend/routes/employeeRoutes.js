@@ -3,7 +3,8 @@ const router = express.Router();
 const {
   getEmployees,
   setEmployee,
-  updateEmployee
+  updateEmployee,
+  deleteEmployee
 } = require("../controllers/employeeController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -13,6 +14,6 @@ router.post("/", protect, setEmployee);
 
 router.put("/:id", protect, updateEmployee);
 
-// router.delete("/:id", deleteEmployee);
+router.delete("/:id", protect, deleteEmployee);
 
 module.exports = router;
