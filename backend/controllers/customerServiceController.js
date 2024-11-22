@@ -83,8 +83,40 @@ const updateCustomerService = asyncHandler(async (req, res) => {
   res.json(updatedServiceCustomer);
 });
 
+/**
+ * @description Delete customer service
+ * @route       DELETE /api/customer-services/:id
+ * @access      Private
+ */
+const deleteCustomerService = asyncHandler(async (req, res) => {
+  const customerServiceExists =
+    await CustomerServiceModel.getCustomerServiceById(req.params.id);
+
+  if (customerServiceExists.length === 0) {
+    res.status(400);
+    throw new Error("Atendimento não encontrado!");
+  }
+
+  if (!req.user) {
+    res.status(400);
+    throw new Error("Usuário não encontrado!");
+  }
+
+  if (customerServiceExists[0].id_admin !== req.user.id) {
+    res.status(400);
+    throw new Error("Usuário não autorizado!");
+  }
+
+  const deletedCustomerService =
+    await CustomerServiceModel.deleteCustomerService(req.params.id);
+
+  res.status(200);
+  res.json(deletedCustomerService);
+});
+
 module.exports = {
   getCustomerServices,
   setCustomerService,
-  updateCustomerService
+  updateCustomerService,
+  deleteCustomerService
 };
