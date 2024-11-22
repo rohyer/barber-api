@@ -55,7 +55,7 @@ const CustomerServiceModel = {
 
     try {
       const [result] = await db.execute(
-        "UPDATE customer_service SET name = ?, time = ?, status = ?, id_service = ?, id_employee = ? WHERE id = ?",
+        "UPDATE customer_service SET date = ?, time = ?, status = ?, id_service = ?, id_employee = ? WHERE id = ?",
         [date, time, status, idService, idEmployee, id]
       );
       return result;
