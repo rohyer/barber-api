@@ -2,7 +2,8 @@ const express = require("express");
 const {
   getCustomerServices,
   setCustomerService,
-  updateCustomerService
+  updateCustomerService,
+  deleteCustomerService
 } = require("../controllers/customerServiceController");
 const { protect } = require("../middleware/authMiddleware");
 const router = express.Router();
@@ -13,6 +14,6 @@ router.post("/", protect, setCustomerService);
 
 router.put("/:id", protect, updateCustomerService);
 
-// router.delete("/:id", );
+router.delete("/:id", protect, deleteCustomerService);
 
 module.exports = router;
