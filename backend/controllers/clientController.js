@@ -40,4 +40,81 @@ const registerClient = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getClients, registerClient };
+/**
+ * @description Update client
+ * @route       PUT /api/clients/:id
+ * @access      Private
+ */
+const updateClient = asyncHandler(async (req, res) => {
+  const { name, sex, phone, address, birth } = req.body;
+
+  if (!name || !sex || !phone || !address || !birth) {
+    res.status(400);
+    throw new Error("Por favor, preencha todos os campos!");
+  }
+
+  const clientExists = await ClientModel.getClientById(req.params.id);
+
+  if (clientExists.length === 0) {
+    res.status(400);
+    throw new Error("Cliente não encontrado!");
+  }
+
+  if (!req.user) {
+    res.status(400);
+    throw new Error("Usuário não encontrado!");
+  }
+
+  if (clientExists[0].id_admin !== req.user.id) {
+    res.status(400);
+    throw new Error("Usuário não autorizado!");
+  }
+
+  const updatedClient = await ClientModel.updateClient(
+    name,
+    sex,
+    phone,
+    address,
+    birth,
+    req.params.id
+  );
+
+  res.status(200);
+  res.json(updatedClient);
+});
+
+/**
+ * @description Delete client
+ * @route       DELETE /api/clients/:id
+ * @access      Private
+ */
+const deleteClient = asyncHandler(async (req, res) => {
+  const clientExists = await ClientModel.getClientById(req.params.id);
+
+  if (clientExists.length === 0) {
+    res.status(400);
+    throw new Error("Cliente não encontrado!");
+  }
+
+  if (!req.user) {
+    res.status(400);
+    throw new Error("Usuário não encontrado!");
+  }
+
+  if (clientExists[0].id_admin !== req.user.id) {
+    res.status(400);
+    throw new Error("Usuário não autorizado!");
+  }
+
+  const deletedClient = await ClientModel.deleteClient(req.params.id);
+
+  res.status(200);
+  res.json(deletedClient);
+});
+
+module.exports = {
+  getClients,
+  registerClient,
+  updateClient,
+  deleteClient
+};
