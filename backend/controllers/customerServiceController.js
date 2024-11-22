@@ -85,5 +85,6 @@ const updateCustomerService = asyncHandler(async (req, res) => {
 
 module.exports = {
   getCustomerServices,
-  setCustomerService
+  setCustomerService,
+  updateCustomerService
 };
