@@ -32,7 +32,6 @@ const CustomerServiceModel = {
   async createCustomerService(
     date,
     time,
-    status,
     idService,
     idClient,
     idEmployee,
@@ -42,8 +41,8 @@ const CustomerServiceModel = {
 
     try {
       const [result] = await db.execute(
-        "INSERT INTO customer_service (date, time, status, id_service, id_client, id_employee, id_admin) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [date, time, status, idService, idClient, idEmployee, idAdmin]
+        "INSERT INTO customer_service (date, time, id_service, id_client, id_employee, id_admin) VALUES (?, ?, ?, ?, ?, ?)",
+        [date, time, idService, idClient, idEmployee, idAdmin]
       );
       return result;
     } catch (error) {
