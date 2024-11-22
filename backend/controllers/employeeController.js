@@ -75,7 +75,8 @@ const updateEmployee = asyncHandler(async (req, res) => {
     address,
     sex,
     phone,
-    birth
+    birth,
+    req.params.id
   );
   res.status(200);
   res.json(updatedEmployee);

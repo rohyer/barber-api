@@ -43,13 +43,13 @@ const EmployeeModel = {
     }
   },
 
-  async updateEmployee(name, address, sex, phone, birth) {
+  async updateEmployee(name, address, sex, phone, birth, id) {
     const db = getDatabaseConnection();
 
     try {
       const [result, field] = await db.execute(
-        "UPDATE employee SET name = ?, address = ?, sex = ?, phone = ?, birth = ?",
-        [name, address, sex, phone, birth]
+        "UPDATE employee SET name = ?, address = ?, sex = ?, phone = ?, birth = ? WHERE id = ?",
+        [name, address, sex, phone, birth, id]
       );
       return result;
     } catch (error) {
