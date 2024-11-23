@@ -69,6 +69,46 @@ const UserModel = {
     } catch (error) {
       throw error;
     }
+  },
+
+  async saveEmailChangeRequest(newEmail, token, expires, id) {
+    const db = getDatabaseConnection();
+
+    try {
+      await db.execute(
+        "UPDATE admin SET new_email = ?, email_token = ?, email_token_expires = ? WHERE id = ?",
+        [newEmail, token, expires, id]
+      );
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async getUserByEmailToken(token) {
+    const db = getDatabaseConnection();
+
+    try {
+      const [result] = await db.execute(
+        "SELECT * FROM admin where email_token = ?",
+        [token]
+      );
+      return result[0];
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async updateUserEmail(newEmail, id) {
+    const db = getDatabaseConnection();
+
+    try {
+      await db.execute(
+        "UPDATE admin SET email = ?, new_email = NULL, email_token = NULL, email_token_expires = NULL WHERE id = ?",
+        [newEmail, id]
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
