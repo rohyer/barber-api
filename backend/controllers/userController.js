@@ -90,7 +90,44 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-// const updateUser = asyncHandler(async (req, res) => {});
+/**
+ * @description Update user data
+ * @route       PUT /api/users/:id
+ * @access      Private
+ */
+const updateUserData = asyncHandler(async (req, res) => {
+  const userExists = await UserModel.getUserById(req.user.id);
+
+  if (userExists.length === 0) {
+    res.status(400);
+    throw new Error("Usuário não encontrado!");
+  }
+
+  const { name, city, state, phone } = req.body;
+
+  if (!name || !city || !state || !phone) {
+    res.status(400);
+    throw new Error("Por favor, preencha os campos!");
+  }
+
+  if (Number(req.params.id) !== req.user.id) {
+    res.status(400);
+    throw new Error("Usuário não autorizado!");
+  }
+
+  const user = await UserModel.updateUserData(
+    name,
+    city,
+    state,
+    phone,
+    req.params.id
+  );
+
+  res.status(200);
+  res.json({
+    user
+  });
+});
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET);
@@ -98,5 +135,6 @@ const generateToken = (id) => {
 
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  updateUserData
 };
