@@ -55,6 +55,20 @@ const UserModel = {
     } catch (error) {
       throw error;
     }
+  },
+
+  async updateUserPassword(password, id) {
+    const db = getDatabaseConnection();
+
+    try {
+      const [result] = await db.execute(
+        "UPDATE admin SET password = ? WHERE id = ?",
+        [password, id]
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
