@@ -129,6 +129,54 @@ const updateUserData = asyncHandler(async (req, res) => {
   });
 });
 
+/**
+ * @description Update user password
+ * @route       PUT /api/users/password/:id
+ * @access      Private
+ */
+const updateUserPassword = asyncHandler(async (req, res) => {
+  const userExists = await UserModel.getUserById(req.params.id);
+
+  if (userExists.length === 0) {
+    res.status(400);
+    throw new Error("Usuário não encontrado!");
+  }
+
+  if (Number(req.params.id) !== req.user.id) {
+    res.status(400);
+    throw new Error("Usuário não autorizado!");
+  }
+
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    res.status(400);
+    throw new Error("Por favor, preencha os campos!");
+  }
+
+  if (
+    userExists.length > 0 &&
+    (await bcrypt.compare(currentPassword, userExists[0].password))
+  ) {
+    const salt = await bcrypt.genSalt(10);
+    const passwordHashed = await bcrypt.hash(newPassword, salt);
+
+    const updatedPassword = await UserModel.updateUserPassword(
+      passwordHashed,
+      req.params.id
+    );
+
+    res.status(200);
+    res.json({
+      message: "Senha Atualizada com sucesso!",
+      ...updatedPassword
+    });
+  } else {
+    res.status(400);
+    throw new Error("Senha atual incorreta!");
+  }
+});
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET);
 };
@@ -136,5 +184,6 @@ const generateToken = (id) => {
 module.exports = {
   registerUser,
   loginUser,
-  updateUserData
+  updateUserData,
+  updateUserPassword
 };
