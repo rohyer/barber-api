@@ -41,6 +41,20 @@ const UserModel = {
     } catch (error) {
       throw error;
     }
+  },
+
+  async updateUserData(name, city, state, phone, id) {
+    const db = getDatabaseConnection();
+
+    try {
+      const [result] = await db.execute(
+        "UPDATE admin SET name = ?, city = ?, state = ?, phone = ? WHERE id = ?",
+        [name, city, state, phone, id]
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
