@@ -24,7 +24,7 @@ const registerClient = asyncHandler(async (req, res) => {
     throw new Error("Por favor, preencha os campos!");
   }
 
-  const result = await ClientModel.createClient(
+  const { userId } = await ClientModel.createClient(
     name,
     sex,
     phone,
@@ -35,8 +35,11 @@ const registerClient = asyncHandler(async (req, res) => {
 
   res.status(201);
   res.json({
+    success: true,
     message: "Cliente cadastrado com sucesso!",
-    id: result.insertId
+    data: {
+      userId
+    }
   });
 });
 
@@ -70,7 +73,7 @@ const updateClient = asyncHandler(async (req, res) => {
     throw new Error("Usuário não autorizado!");
   }
 
-  const updatedClient = await ClientModel.updateClient(
+  const affectedRows = await ClientModel.updateClient(
     name,
     sex,
     phone,
@@ -80,7 +83,13 @@ const updateClient = asyncHandler(async (req, res) => {
   );
 
   res.status(200);
-  res.json(updatedClient);
+  res.json({
+    success: true,
+    message: "Cliente atualizado com sucesso!",
+    data: {
+      affectedRows
+    }
+  });
 });
 
 /**
