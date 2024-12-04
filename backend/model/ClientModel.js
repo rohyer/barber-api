@@ -37,7 +37,8 @@ const ClientModel = {
         "INSERT INTO client (name, sex, phone, address, birth, id_admin) VALUES (?, ?, ?, ?, ?, ?)",
         [name, sex, phone, address, birth, idAdmin]
       );
-      return result;
+
+      return { userId: result.insertId };
     } catch (error) {
       throw error;
     }
@@ -51,7 +52,8 @@ const ClientModel = {
         "UPDATE client SET name = ?, sex = ?, phone = ?, address = ?, birth = ? WHERE id = ?",
         [name, sex, phone, address, birth, id]
       );
-      return result;
+
+      return result.affectedRows;
     } catch (error) {
       throw error;
     }
