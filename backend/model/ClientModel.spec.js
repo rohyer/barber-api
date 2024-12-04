@@ -102,4 +102,76 @@ describe("ClientModel", () => {
       ]);
     });
   });
+
+  describe("createClient", () => {
+    it("Should create a client", async () => {
+      const mockExecute = jest.fn().mockResolvedValue([
+        {
+          fieldCount: 0,
+          affectedRows: 1,
+          insertId: 1,
+          info: "",
+          serverStatus: 2,
+          warningStatus: 0,
+          changedRows: 0
+        }
+      ]);
+
+      getDatabaseConnection.mockReturnValue({ execute: mockExecute });
+
+      const name = "Guilherme R.";
+      const sex = "M";
+      const phone = "(84) 98105-6717";
+      const address = "Rua tal";
+      const birth = "2000-01-01";
+      const idAdmin = 1;
+
+      const result = await ClientModel.createClient(
+        name,
+        sex,
+        phone,
+        address,
+        birth,
+        idAdmin
+      );
+
+      expect(mockExecute).toHaveBeenCalledWith(
+        "INSERT INTO client (name, sex, phone, address, birth, id_admin) VALUES (?, ?, ?, ?, ?, ?)",
+        [name, sex, phone, address, birth, idAdmin]
+      );
+      expect(result).toEqual({
+        fieldCount: 0,
+        affectedRows: 1,
+        insertId: 1,
+        info: "",
+        serverStatus: 2,
+        warningStatus: 0,
+        changedRows: 0
+      });
+    });
+
+    it("Should throw an error if it fail", async () => {
+      const mockExecute = jest
+        .fn()
+        .mockRejectedValue(new Error("Erro no banco"));
+
+      getDatabaseConnection.mockReturnValue({ execute: mockExecute });
+
+      const name = "Guilherme R.";
+      const sex = "M";
+      const phone = "(84) 98105-6717";
+      const address = "Rua tal";
+      const birth = "2000-01-01";
+      const idAdmin = 1;
+
+      await expect(
+        ClientModel.createClient(name, sex, phone, address, birth, idAdmin)
+      ).rejects.toThrow("Erro no banco");
+
+      expect(mockExecute).toHaveBeenCalledWith(
+        "INSERT INTO client (name, sex, phone, address, birth, id_admin) VALUES (?, ?, ?, ?, ?, ?)",
+        [name, sex, phone, address, birth, idAdmin]
+      );
+    });
+  });
 });
