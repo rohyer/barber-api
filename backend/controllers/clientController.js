@@ -73,7 +73,7 @@ const updateClient = asyncHandler(async (req, res) => {
     throw new Error("Usuário não autorizado!");
   }
 
-  const affectedRows = await ClientModel.updateClient(
+  const result = await ClientModel.updateClient(
     name,
     sex,
     phone,
@@ -87,7 +87,7 @@ const updateClient = asyncHandler(async (req, res) => {
     success: true,
     message: "Cliente atualizado com sucesso!",
     data: {
-      affectedRows
+      affectedRows: result.affectedRows
     }
   });
 });
