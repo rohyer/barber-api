@@ -53,7 +53,7 @@ const ClientModel = {
         [name, sex, phone, address, birth, id]
       );
 
-      return result.affectedRows;
+      return result;
     } catch (error) {
       throw error;
     }
