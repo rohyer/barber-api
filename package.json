@@ -5,11 +5,13 @@
   "main": "server.js",
   "scripts": {
     "start": "node backend/server.js",
-    "server": "nodemon backend/server.js"
+    "server": "nodemon backend/server.js",
+    "test": "jest"
   },
   "author": "Guilherme R.",
   "license": "MIT",
   "devDependencies": {
+    "jest": "^29.7.0",
     "nodemon": "^3.1.7"
   },
   "dependencies": {
