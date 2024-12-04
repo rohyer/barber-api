@@ -10,11 +10,21 @@ describe("ClientModel", () => {
         [
           {
             id: 1,
-            name: "Cliente 1"
+            name: "Guilherme R.",
+            sex: "M",
+            phone: "(84) 98105-6717",
+            address: "Rua teste",
+            birth: "2000-01-01",
+            id_admin: 1
           },
           {
             id: 1,
-            name: "Cliente 1"
+            name: "Guilherme R.",
+            sex: "M",
+            phone: "(84) 98105-6717",
+            address: "Rua teste",
+            birth: "2000-01-01",
+            id_admin: 1
           }
         ]
       ]);
@@ -33,11 +43,21 @@ describe("ClientModel", () => {
       expect(result).toEqual([
         {
           id: 1,
-          name: "Cliente 1"
+          name: "Guilherme R.",
+          sex: "M",
+          phone: "(84) 98105-6717",
+          address: "Rua teste",
+          birth: "2000-01-01",
+          id_admin: 1
         },
         {
           id: 1,
-          name: "Cliente 1"
+          name: "Guilherme R.",
+          sex: "M",
+          phone: "(84) 98105-6717",
+          address: "Rua teste",
+          birth: "2000-01-01",
+          id_admin: 1
         }
       ]);
     });
