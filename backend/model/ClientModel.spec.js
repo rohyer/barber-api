@@ -5,7 +5,7 @@ jest.mock("../config/db");
 
 describe("ClientModel", () => {
   describe("getClients", () => {
-    it("Deve retornar uma lista (array de objetos) de clientes", async () => {
+    it("Should return an array of objects", async () => {
       const mockExecute = jest.fn().mockResolvedValue([
         [
           {
@@ -160,6 +160,54 @@ describe("ClientModel", () => {
         "INSERT INTO client (name, sex, phone, address, birth, id_admin) VALUES (?, ?, ?, ?, ?, ?)",
         [name, sex, phone, address, birth, idAdmin]
       );
+    });
+  });
+
+  describe("updateClient", () => {
+    it("Should update a client", async () => {
+      const mockExecute = jest.fn().mockResolvedValue([
+        {
+          fieldCount: 0,
+          affectedRows: 1,
+          insertId: 0,
+          info: "",
+          serverStatus: 2,
+          warningStatus: 2,
+          changedRows: 0
+        }
+      ]);
+
+      getDatabaseConnection.mockReturnValue({ execute: mockExecute });
+
+      const name = "Guilherme R.";
+      const sex = "M";
+      const phone = "(84) 98105-6717";
+      const address = "Rua tal";
+      const birth = "2000-01-01";
+      const id = 1;
+
+      const result = await ClientModel.updateClient(
+        name,
+        sex,
+        phone,
+        address,
+        birth,
+        id
+      );
+
+      expect(mockExecute).toHaveBeenCalledWith(
+        "UPDATE client SET name = ?, sex = ?, phone = ?, address = ?, birth = ? WHERE id = ?",
+        [name, sex, phone, address, birth, id]
+      );
+      expect(result).toEqual({
+        fieldCount: 0,
+        affectedRows: 1,
+        insertId: 0,
+        info: "",
+        serverStatus: 2,
+        warningStatus: 2,
+        changedRows: 0
+      });
     });
   });
 });
