@@ -24,7 +24,7 @@ const registerClient = asyncHandler(async (req, res) => {
     throw new Error("Por favor, preencha os campos!");
   }
 
-  const { userId } = await ClientModel.createClient(
+  const result = await ClientModel.createClient(
     name,
     sex,
     phone,
@@ -38,7 +38,7 @@ const registerClient = asyncHandler(async (req, res) => {
     success: true,
     message: "Cliente cadastrado com sucesso!",
     data: {
-      userId
+      userId: result.insertId
     }
   });
 });
