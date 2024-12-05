@@ -216,4 +216,40 @@ describe("CustomerServicModel", () => {
       });
     });
   });
+
+  describe("deleteCustomerService", () => {
+    it("should delete a customer service", async () => {
+      const mockExecute = jest.fn().mockResolvedValue([
+        {
+          fieldCount: 0,
+          affectedRows: 1,
+          insertId: 0,
+          info: "",
+          serverStatus: 2,
+          warningStatus: 0,
+          changedRows: 0
+        }
+      ]);
+
+      getConnectionDatabase.mockReturnValue({ execute: mockExecute });
+
+      const id = 1;
+
+      const result = await CustomerServiceModel.deleteCustomerService(id);
+
+      expect(mockExecute).toHaveBeenCalledWith(
+        "DELETE FROM customer_service WHERE id = ?",
+        [id]
+      );
+      expect(result).toEqual({
+        fieldCount: 0,
+        affectedRows: 1,
+        insertId: 0,
+        info: "",
+        serverStatus: 2,
+        warningStatus: 0,
+        changedRows: 0
+      });
+    });
+  });
 });
