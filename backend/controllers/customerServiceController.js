@@ -8,7 +8,7 @@ const CustomerServiceModel = require("../model/CustomerServiceModel");
  */
 const getCustomerServices = asyncHandler(async (req, res) => {
   const customerServices = await CustomerServiceModel.getCustomerServices(
-    req.params.id
+    req.user.id
   );
 
   res.status(200).json(customerServices);
