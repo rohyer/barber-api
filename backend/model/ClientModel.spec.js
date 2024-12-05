@@ -107,7 +107,13 @@ describe("ClientModel", () => {
     it("Should create a client", async () => {
       const mockExecute = jest.fn().mockResolvedValue([
         {
-          insertId: 1
+          fieldCount: 0,
+          affectedRows: 1,
+          insertId: 22,
+          info: "",
+          serverStatus: 2,
+          warningStatus: 2,
+          changedRows: 0
         }
       ]);
 
@@ -134,7 +140,13 @@ describe("ClientModel", () => {
         [name, sex, phone, address, birth, idAdmin]
       );
       expect(result).toEqual({
-        userId: 1
+        fieldCount: 0,
+        affectedRows: 1,
+        insertId: 22,
+        info: "",
+        serverStatus: 2,
+        warningStatus: 2,
+        changedRows: 0
       });
     });
 
