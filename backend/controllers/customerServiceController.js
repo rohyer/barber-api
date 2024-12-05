@@ -38,8 +38,11 @@ const setCustomerService = asyncHandler(async (req, res) => {
 
   res.status(201);
   res.json({
-    message: "Cadastro realizado com sucesso!",
-    id: result.insertId
+    success: true,
+    message: "Agendamento cadastrado com sucesso!",
+    data: {
+      id: result.insertId
+    }
   });
 });
 
@@ -69,18 +72,23 @@ const updateCustomerService = asyncHandler(async (req, res) => {
     throw new Error("Usuário não autorizado!");
   }
 
-  const updatedServiceCustomer =
-    await CustomerServiceModel.updateCustomerService(
-      date,
-      time,
-      idService,
-      idClient,
-      idEmployee,
-      req.params.id
-    );
+  const result = await CustomerServiceModel.updateCustomerService(
+    date,
+    time,
+    idService,
+    idClient,
+    idEmployee,
+    req.params.id
+  );
 
   res.status(200);
-  res.json(updatedServiceCustomer);
+  res.json({
+    success: true,
+    message: "Agendamento atualizado com sucesso!",
+    data: {
+      affectedRows: result.affectedRows
+    }
+  });
 });
 
 /**
