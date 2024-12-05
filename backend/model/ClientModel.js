@@ -38,7 +38,7 @@ const ClientModel = {
         [name, sex, phone, address, birth, idAdmin]
       );
 
-      return { userId: result.insertId };
+      return result;
     } catch (error) {
       throw error;
     }
