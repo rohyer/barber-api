@@ -8,7 +8,7 @@ const EmployeeModel = require("../model/EmployeeModel");
  */
 const getEmployees = asyncHandler(async (req, res) => {
   const employees = await EmployeeModel.getEmployees(req.user.id);
-  res.status(200).json({ employees });
+  res.status(200).json(employees);
 });
 
 /**
@@ -35,8 +35,11 @@ const setEmployee = asyncHandler(async (req, res) => {
 
   res.status(201);
   res.json({
+    success: true,
     message: "Colaborador cadastrado com sucesso!",
-    id: result.insertId
+    data: {
+      employeeId: result.insertId
+    }
   });
 });
 
@@ -70,7 +73,7 @@ const updateEmployee = asyncHandler(async (req, res) => {
     throw new Error("Usuário não autorizado!");
   }
 
-  const updatedEmployee = await EmployeeModel.updateEmployee(
+  const result = await EmployeeModel.updateEmployee(
     name,
     address,
     sex,
@@ -79,7 +82,13 @@ const updateEmployee = asyncHandler(async (req, res) => {
     req.params.id
   );
   res.status(200);
-  res.json(updatedEmployee);
+  res.json({
+    success: true,
+    message: "Colaborador atualizado com sucesso!",
+    data: {
+      affectedRows: result.affectedRows
+    }
+  });
 });
 
 /**
