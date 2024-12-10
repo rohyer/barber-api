@@ -95,4 +95,42 @@ describe("ServiceModel", () => {
       ]);
     });
   });
+
+  describe("updateService", () => {
+    it("should update a service", async () => {
+      const mockExecute = jest.fn().mockResolvedValue([
+        {
+          fieldCount: 0,
+          affectedRows: 1,
+          insertId: 0,
+          info: "",
+          serverStatus: 2,
+          warningStatus: 2,
+          changedRows: 0
+        }
+      ]);
+
+      getDatabaseConnection.mockReturnValue({ execute: mockExecute });
+
+      const name = "Corte de cabelo";
+      const value = 50.0;
+      const id = 1;
+
+      const result = await ServiceModel.updateService(name, value, id);
+
+      expect(mockExecute).toHaveBeenCalledWith(
+        "UPDATE service SET name = ?, value = ? WHERE id = ? LIMIT 1",
+        [name, value, id]
+      );
+      expect(result).toEqual({
+        fieldCount: 0,
+        affectedRows: 1,
+        insertId: 0,
+        info: "",
+        serverStatus: 2,
+        warningStatus: 2,
+        changedRows: 0
+      });
+    });
+  });
 });
