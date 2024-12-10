@@ -133,4 +133,41 @@ describe("ServiceModel", () => {
       });
     });
   });
+
+  describe("deleteService", () => {
+    it("should delete a service", async () => {
+      const mockExecute = jest.fn().mockResolvedValue([
+        {
+          fieldCount: 0,
+          affectedRows: 1,
+          insertId: 0,
+          info: "",
+          serverStatus: 2,
+          warningStatus: 0,
+          changedRows: 0
+        }
+      ]);
+
+      getDatabaseConnection.mockReturnValue({ execute: mockExecute });
+
+      const id = 1;
+
+      const result = await ServiceModel.deleteService(id);
+
+      expect(mockExecute).toHaveBeenCalledWith(
+        "DELETE FROM service WHERE id = ?",
+        [id]
+      );
+      expect(mockExecute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({
+        fieldCount: 0,
+        affectedRows: 1,
+        insertId: 0,
+        info: "",
+        serverStatus: 2,
+        warningStatus: 0,
+        changedRows: 0
+      });
+    });
+  });
 });
