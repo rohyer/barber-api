@@ -8,7 +8,7 @@ const ServiceModel = require("../model/serviceModel");
  */
 const getServices = asyncHandler(async (req, res) => {
   const result = await ServiceModel.getServices(req.user.id);
-  res.status(200).json({ result });
+  res.status(200).json(result);
 });
 
 /**
