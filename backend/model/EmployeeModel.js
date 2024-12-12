@@ -6,7 +6,7 @@ const EmployeeModel = {
 
     try {
       const [result] = await db.execute(
-        "SELECT * FROM employee WHERE id_admin = ?",
+        "SELECT id, name, address, sex, phone, birth FROM employee WHERE id_admin = ?",
         [idAdmin]
       );
       return result;
@@ -20,7 +20,7 @@ const EmployeeModel = {
 
     try {
       const [result] = await db.execute(
-        "SELECT * FROM employee WHERE id = ? LIMIT 1",
+        "SELECT id, name, address, sex, phone, birth FROM employee WHERE id = ? LIMIT 1",
         [id]
       );
       return result;

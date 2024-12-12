@@ -34,7 +34,7 @@ const ServiceModel = {
 
     try {
       const [result] = await db.execute(
-        "SELECT * FROM service WHERE id = ? LIMIT 1",
+        "SELECT id, name, value FROM service WHERE id = ? LIMIT 1",
         [id]
       );
       return result;
@@ -48,7 +48,7 @@ const ServiceModel = {
 
     try {
       const [result] = await db.execute(
-        "SELECT * FROM service WHERE id_admin = ?",
+        "SELECT id, name, value FROM service WHERE id_admin = ?",
         [idAdmin]
       );
       return result;

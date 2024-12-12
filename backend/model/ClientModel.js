@@ -6,7 +6,7 @@ const ClientModel = {
 
     try {
       const [result] = await db.execute(
-        "SELECT * FROM client WHERE id_admin = ?",
+        "SELECT id, name, sex, phone, address, birth FROM client WHERE id_admin = ?",
         [idAdmin]
       );
       return result;
@@ -20,7 +20,7 @@ const ClientModel = {
 
     try {
       const [result] = await db.execute(
-        "SELECT * FROM client WHERE id = ? LIMIT 1",
+        "SELECT id, name, sex, phone, address, birth FROM client WHERE id = ? LIMIT 1",
         [id]
       );
       return result;
