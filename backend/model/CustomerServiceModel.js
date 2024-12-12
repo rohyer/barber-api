@@ -6,8 +6,8 @@ const CustomerServiceModel = {
 
     try {
       const [result] = await db.execute(
-        "SELECT cs.id, cs.date, cs.time, c.phone, c.name as client, s.name as service, e.name as employee FROM customer_service cs JOIN client c ON cs.id_client = c.id JOIN service s ON cs.id_service = s.id JOIN employee e ON cs.id_employee = e.id ORDER BY cs.date, cs.time",
-        []
+        "SELECT cs.id, cs.date, cs.time, c.phone, c.name as client, s.name as service, e.name as employee FROM customer_service cs JOIN client c ON cs.id_client = c.id JOIN service s ON cs.id_service = s.id JOIN employee e ON cs.id_employee = e.id WHERE cs.id_admin = ? ORDER BY cs.date, cs.time",
+        [idAdmin]
       );
       return result;
     } catch (error) {
