@@ -5,9 +5,9 @@ let pool;
 const connectionDB = () => {
   try {
     pool = mysql.createPool({
-      host: "localhost",
+      host: "db",
       user: "root",
-      password: "",
+      password: "rootpassword",
       database: "barber"
     });
 
