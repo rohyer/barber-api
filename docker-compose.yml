@@ -8,6 +8,7 @@ services:
       - .:/app
     depends_on:
       - db
+      - redis
 
   db:
     image: mariadb:10.4.32
@@ -29,5 +30,14 @@ services:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: rootpassword
 
+  redis:
+    image: redis
+    container_name: barber-redis-container
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
 volumes:
   mariadb-data:
+  redis-data:
