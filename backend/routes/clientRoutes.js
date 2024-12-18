@@ -7,8 +7,9 @@ const {
   deleteClient
 } = require("../controllers/clientController");
 const { protect } = require("../middleware/authMiddleware");
+const { cacheMiddleware } = require("../middleware/cacheMiddleware");
 
-router.get("/", protect, getClients);
+router.get("/", protect, cacheMiddleware, getClients);
 
 router.post("/", protect, registerClient);
 
