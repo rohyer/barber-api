@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const ClientModel = require("../model/ClientModel");
+const redisClient = require("../config/redisClient");
 
 /**
  * @description Get all clients
@@ -8,6 +9,8 @@ const ClientModel = require("../model/ClientModel");
  */
 const getClients = asyncHandler(async (req, res) => {
   const clients = await ClientModel.getClients(req.user.id);
+
+  await redisClient.set(req.cacheKey, JSON.stringify(clients), { EX: 20 });
   res.status(200).json(clients);
 });
 
