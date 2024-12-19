@@ -13,7 +13,7 @@ const getCustomerServices = asyncHandler(async (req, res) => {
   );
 
   await redisClient.set(req.cacheKey, JSON.stringify(customerServices), {
-    EX: 20
+    EX: 120
   });
 
   res.status(200).json(customerServices);

@@ -10,7 +10,7 @@ const redisClient = require("../config/redisClient");
 const getClients = asyncHandler(async (req, res) => {
   const clients = await ClientModel.getClients(req.user.id);
 
-  await redisClient.set(req.cacheKey, JSON.stringify(clients), { EX: 20 });
+  await redisClient.set(req.cacheKey, JSON.stringify(clients), { EX: 300 });
   res.status(200).json(clients);
 });
 
