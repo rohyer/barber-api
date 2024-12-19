@@ -67,14 +67,20 @@ const updateService = asyncHandler(async (req, res) => {
     throw new Error("Usuário não autorizado");
   }
 
-  const updatedService = await ServiceModel.updateService(
+  const result = await ServiceModel.updateService(
     req.body.name,
     req.body.value,
     req.params.id,
     req.user.id
   );
   res.status(200);
-  res.json(updatedService);
+  res.json({
+    success: true,
+    message: "Serviço atualizado com sucesso!",
+    data: {
+      affectedRows: result.affectedRows
+    }
+  });
 });
 
 /**
