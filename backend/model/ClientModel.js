@@ -1,4 +1,5 @@
 const getDatabaseConnection = require("../config/db");
+const redisClient = require("../config/redisClient");
 
 const ClientModel = {
   async getClients(idAdmin) {
@@ -20,7 +21,7 @@ const ClientModel = {
 
     try {
       const [result] = await db.execute(
-        "SELECT id, name, sex, phone, address, birth FROM client WHERE id = ? LIMIT 1",
+        "SELECT id, name, sex, phone, address, birth, id_admin FROM client WHERE id = ? LIMIT 1",
         [id]
       );
       return result;
@@ -38,13 +39,14 @@ const ClientModel = {
         [name, sex, phone, address, birth, idAdmin]
       );
 
+      await redisClient.del(`clients:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
     }
   },
 
-  async updateClient(name, sex, phone, address, birth, id) {
+  async updateClient(name, sex, phone, address, birth, id, idAdmin) {
     const db = getDatabaseConnection();
 
     try {
@@ -53,19 +55,22 @@ const ClientModel = {
         [name, sex, phone, address, birth, id]
       );
 
+      await redisClient.del(`clients:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
     }
   },
 
-  async deleteClient(id) {
+  async deleteClient(id, idAdmin) {
     const db = getDatabaseConnection();
 
     try {
       const [result] = await db.execute("DELETE FROM client WHERE id = ?", [
         id
       ]);
+
+      await redisClient.del(`clients:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
