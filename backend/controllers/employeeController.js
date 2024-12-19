@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const EmployeeModel = require("../model/EmployeeModel");
+const redisClient = require("../config/redisClient");
 
 /**
  * @description Get all employees
@@ -8,6 +9,7 @@ const EmployeeModel = require("../model/EmployeeModel");
  */
 const getEmployees = asyncHandler(async (req, res) => {
   const employees = await EmployeeModel.getEmployees(req.user.id);
+  await redisClient.set(req.cacheKey, JSON.stringify(employees), { EX: 20 });
   res.status(200).json(employees);
 });
 
