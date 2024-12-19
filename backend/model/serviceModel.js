@@ -1,4 +1,5 @@
 const getDatabaseConnection = require("../config/db");
+const redisClient = require("../config/redisClient");
 
 const ServiceModel = {
   async createService(name, value, idAdmin) {
@@ -9,6 +10,8 @@ const ServiceModel = {
         "INSERT INTO service (name, value, id_admin) VALUES (?, ?, ?)",
         [name, value, idAdmin]
       );
+
+      await redisClient.del(`services:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
@@ -34,7 +37,7 @@ const ServiceModel = {
 
     try {
       const [result] = await db.execute(
-        "SELECT id, name, value FROM service WHERE id = ? LIMIT 1",
+        "SELECT id, name, value, id_admin FROM service WHERE id = ? LIMIT 1",
         [id]
       );
       return result;
@@ -57,7 +60,7 @@ const ServiceModel = {
     }
   },
 
-  async updateService(name, value, id) {
+  async updateService(name, value, id, idAdmin) {
     const db = getDatabaseConnection();
 
     try {
@@ -65,19 +68,23 @@ const ServiceModel = {
         "UPDATE service SET name = ?, value = ? WHERE id = ? LIMIT 1",
         [name, value, id]
       );
+
+      await redisClient.del(`services:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
     }
   },
 
-  async deleteService(id) {
+  async deleteService(id, idAdmin) {
     const db = getDatabaseConnection();
 
     try {
       const [result] = await db.execute("DELETE FROM service WHERE id = ?", [
         id
       ]);
+
+      await redisClient.del(`services:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
