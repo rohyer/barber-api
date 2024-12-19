@@ -82,7 +82,8 @@ const updateClient = asyncHandler(async (req, res) => {
     phone,
     address,
     birth,
-    req.params.id
+    req.params.id,
+    req.user.id
   );
 
   res.status(200);
@@ -118,7 +119,10 @@ const deleteClient = asyncHandler(async (req, res) => {
     throw new Error("Usuário não autorizado!");
   }
 
-  const deletedClient = await ClientModel.deleteClient(req.params.id);
+  const deletedClient = await ClientModel.deleteClient(
+    req.params.id,
+    req.user.id
+  );
 
   res.status(200);
   res.json(deletedClient);
