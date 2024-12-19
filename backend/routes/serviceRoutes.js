@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { protect } = require("../middleware/authMiddleware");
+const { cacheMiddleware } = require("../middleware/cacheMiddleware");
 const {
   getServices,
   setService,
@@ -8,7 +9,7 @@ const {
   deleteService
 } = require("../controllers/serviceController");
 
-router.get("/", protect, getServices);
+router.get("/", protect, cacheMiddleware, getServices);
 
 router.post("/", protect, setService);
 

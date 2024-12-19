@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const ServiceModel = require("../model/serviceModel");
+const redisClient = require("../config/redisClient");
 
 /**
  * @description Get services
@@ -8,6 +9,8 @@ const ServiceModel = require("../model/serviceModel");
  */
 const getServices = asyncHandler(async (req, res) => {
   const result = await ServiceModel.getServices(req.user.id);
+  await redisClient.set(req.cacheKey, JSON.stringify(result), { EX: 300 });
+
   res.status(200).json(result);
 });
 
