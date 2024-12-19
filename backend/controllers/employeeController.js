@@ -123,7 +123,13 @@ const deleteEmployee = asyncHandler(async (req, res) => {
   );
 
   res.status(200);
-  res.json(deletedEmployee);
+  res.json({
+    success: true,
+    message: "Colaborador deletado com sucesso",
+    data: {
+      id: req.params.id
+    }
+  });
 });
 
 module.exports = {

@@ -130,7 +130,10 @@ const deleteCustomerService = asyncHandler(async (req, res) => {
   res.status(200);
   res.json({
     success: true,
-    message: "Agendamento deletado com sucesso"
+    message: "Agendamento deletado com sucesso",
+    data: {
+      id: req.params.id
+    }
   });
 });
 

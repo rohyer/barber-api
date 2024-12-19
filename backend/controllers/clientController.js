@@ -125,7 +125,13 @@ const deleteClient = asyncHandler(async (req, res) => {
   );
 
   res.status(200);
-  res.json(deletedClient);
+  res.json({
+    success: true,
+    message: "Cliente deletado com sucesso",
+    data: {
+      id: req.params.id
+    }
+  });
 });
 
 module.exports = {

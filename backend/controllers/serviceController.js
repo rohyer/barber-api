@@ -107,7 +107,13 @@ const deleteService = asyncHandler(async (req, res) => {
   }
 
   await ServiceModel.deleteService(req.params.id, req.user.id);
-  res.status(200).json({ id: req.params.id });
+  res.status(200).json({
+    success: true,
+    message: "Serviço deletado com sucesso",
+    data: {
+      id: req.params.id
+    }
+  });
 });
 
 module.exports = {
