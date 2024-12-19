@@ -1,4 +1,5 @@
 const getDatabaseConnection = require("../config/db");
+const redisClient = require("../config/redisClient");
 
 const EmployeeModel = {
   async getEmployees(idAdmin) {
@@ -20,7 +21,7 @@ const EmployeeModel = {
 
     try {
       const [result] = await db.execute(
-        "SELECT id, name, address, sex, phone, birth FROM employee WHERE id = ? LIMIT 1",
+        "SELECT id, name, address, sex, phone, birth, id_admin FROM employee WHERE id = ? LIMIT 1",
         [id]
       );
       return result;
@@ -37,13 +38,15 @@ const EmployeeModel = {
         "INSERT INTO employee (name, address, sex, phone, birth, id_admin) VALUES (?, ?, ?, ?, ?, ?)",
         [name, address, sex, phone, birth, idAdmin]
       );
+
+      await redisClient.del(`employees:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
     }
   },
 
-  async updateEmployee(name, address, sex, phone, birth, id) {
+  async updateEmployee(name, address, sex, phone, birth, id, idAdmin) {
     const db = getDatabaseConnection();
 
     try {
@@ -51,19 +54,23 @@ const EmployeeModel = {
         "UPDATE employee SET name = ?, address = ?, sex = ?, phone = ?, birth = ? WHERE id = ?",
         [name, address, sex, phone, birth, id]
       );
+
+      await redisClient.del(`employees:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
     }
   },
 
-  async deleteEmployee(id) {
+  async deleteEmployee(id, idAdmin) {
     const db = getDatabaseConnection();
 
     try {
       const [result] = await db.execute("DELETE FROM employee WHERE id = ?", [
         id
       ]);
+
+      await redisClient.del(`employees:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
