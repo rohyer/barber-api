@@ -2,8 +2,8 @@ const redisClient = require("../config/redisClient");
 
 const cacheMiddleware = async (req, res, next) => {
   // const id = req.params.id;
-  const prefix = req.originalUrl;
-  const cacheKey = prefix;
+  const prefix = req.originalUrl.split("/");
+  const cacheKey = `${prefix[prefix.length - 1]}:user:${req.user.id}`;
 
   try {
     const cachedData = await redisClient.get(cacheKey);
