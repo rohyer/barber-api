@@ -83,7 +83,8 @@ const updateCustomerService = asyncHandler(async (req, res) => {
     idService,
     idClient,
     idEmployee,
-    req.params.id
+    req.params.id,
+    req.user.id
   );
 
   res.status(200);
@@ -121,7 +122,10 @@ const deleteCustomerService = asyncHandler(async (req, res) => {
   }
 
   const deletedCustomerService =
-    await CustomerServiceModel.deleteCustomerService(req.params.id);
+    await CustomerServiceModel.deleteCustomerService(
+      req.params.id,
+      req.user.id
+    );
 
   res.status(200);
   res.json({
