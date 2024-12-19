@@ -70,7 +70,8 @@ const updateService = asyncHandler(async (req, res) => {
   const updatedService = await ServiceModel.updateService(
     req.body.name,
     req.body.value,
-    req.params.id
+    req.params.id,
+    req.user.id
   );
   res.status(200);
   res.json(updatedService);
@@ -99,7 +100,7 @@ const deleteService = asyncHandler(async (req, res) => {
     throw new Error("Usuário não autorizado");
   }
 
-  await ServiceModel.deleteService(req.params.id);
+  await ServiceModel.deleteService(req.params.id, req.user.id);
   res.status(200).json({ id: req.params.id });
 });
 
