@@ -1,4 +1,5 @@
 const getDatabaseConnection = require("../config/db");
+const redisClient = require("../config/redisClient");
 
 const CustomerServiceModel = {
   async getCustomerServices(idAdmin) {
@@ -20,7 +21,7 @@ const CustomerServiceModel = {
 
     try {
       const [result] = await db.execute(
-        "SELECT * FROM customer_service WHERE id = ? LIMIT 1",
+        "SELECT id, date, time, status, id_service, id_client, id_employee, id_admin FROM customer_service WHERE id = ? LIMIT 1",
         [id]
       );
       return result;
@@ -44,27 +45,38 @@ const CustomerServiceModel = {
         "INSERT INTO customer_service (date, time, id_service, id_client, id_employee, id_admin) VALUES (?, ?, ?, ?, ?, ?)",
         [date, time, idService, idClient, idEmployee, idAdmin]
       );
+      await redisClient.del(`customer-services:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
     }
   },
 
-  async updateCustomerService(date, time, status, idService, idEmployee, id) {
+  async updateCustomerService(
+    date,
+    time,
+    idService,
+    idClient,
+    idEmployee,
+    id,
+    idAdmin
+  ) {
     const db = getDatabaseConnection();
 
     try {
       const [result] = await db.execute(
-        "UPDATE customer_service SET date = ?, time = ?, status = ?, id_service = ?, id_employee = ? WHERE id = ?",
-        [date, time, status, idService, idEmployee, id]
+        "UPDATE customer_service SET date = ?, time = ?, id_service = ?, id_client = ?, id_employee = ? WHERE id = ?",
+        [date, time, idService, idClient, idEmployee, id]
       );
+
+      await redisClient.del(`customer-services:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
     }
   },
 
-  async deleteCustomerService(id) {
+  async deleteCustomerService(id, idAdmin) {
     const db = getDatabaseConnection();
 
     try {
@@ -72,6 +84,8 @@ const CustomerServiceModel = {
         "DELETE FROM customer_service WHERE id = ?",
         [id]
       );
+
+      await redisClient.del(`customer-services:user:${idAdmin}`);
       return result;
     } catch (error) {
       throw error;
