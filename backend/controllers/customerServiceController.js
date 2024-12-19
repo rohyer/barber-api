@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const CustomerServiceModel = require("../model/CustomerServiceModel");
+const redisClient = require("../config/redisClient");
 
 /**
  * @description Get all customer services
@@ -10,6 +11,10 @@ const getCustomerServices = asyncHandler(async (req, res) => {
   const customerServices = await CustomerServiceModel.getCustomerServices(
     req.user.id
   );
+
+  await redisClient.set(req.cacheKey, JSON.stringify(customerServices), {
+    EX: 20
+  });
 
   res.status(200).json(customerServices);
 });
