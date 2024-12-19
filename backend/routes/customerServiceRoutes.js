@@ -6,9 +6,10 @@ const {
   deleteCustomerService
 } = require("../controllers/customerServiceController");
 const { protect } = require("../middleware/authMiddleware");
+const { cacheMiddleware } = require("../middleware/cacheMiddleware");
 const router = express.Router();
 
-router.get("/", protect, getCustomerServices);
+router.get("/", protect, cacheMiddleware, getCustomerServices);
 
 router.post("/", protect, setCustomerService);
 
