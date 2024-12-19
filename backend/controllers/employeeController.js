@@ -81,7 +81,8 @@ const updateEmployee = asyncHandler(async (req, res) => {
     sex,
     phone,
     birth,
-    req.params.id
+    req.params.id,
+    req.user.id
   );
   res.status(200);
   res.json({
@@ -116,7 +117,10 @@ const deleteEmployee = asyncHandler(async (req, res) => {
     throw new Error("Usuário não autorizado!");
   }
 
-  const deletedEmployee = await EmployeeModel.deleteEmployee(req.params.id);
+  const deletedEmployee = await EmployeeModel.deleteEmployee(
+    req.params.id,
+    req.user.id
+  );
 
   res.status(200);
   res.json(deletedEmployee);
