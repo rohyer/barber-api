@@ -24,4 +24,6 @@ app.use("/api/customer-services", require("./routes/customerServiceRoutes"));
 
 app.get("/confirm-email-change", confirmEmailChange);
 
-app.listen(port, () => console.log(`Server started on port ${port}`));
+app.listen(port, () =>
+  console.log(`Instance ${process.env.APP_NAME} started on port ${port}`)
+);
