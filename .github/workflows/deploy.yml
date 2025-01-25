@@ -38,7 +38,7 @@ jobs:
       - name: Run Docker Compose for Deployment
         run: |
           echo "Deploying to Development Environment"
-          docker-compose --env-file /dev/null -f docker-compose.yml up -d
+          docker-compose -f docker-compose.yml up -d
         env:
           DATABASE_ROOT_PASSWORD: ${{ secrets.DATABASE_ROOT_PASSWORD }}
           DATABASE_HOST: ${{ secrets.DATABASE_HOST_DEV }}
