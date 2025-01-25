@@ -40,8 +40,14 @@ jobs:
           echo "Deploying to Development Environment"
           docker-compose -f docker-compose.yml up -d
         env:
-          DATABASE_ROOT_PASSWORD: ${{ secrets.DATABASE_ROOT_PASSWORD }}
+          NODE_ENV: ${{ vars.NODE_ENV }}
+          PORT: ${{ vars.PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET_DEV }}
           DATABASE_HOST: ${{ secrets.DATABASE_HOST_DEV }}
+          DATABASE_ROOT_USER: ${{ secrets.DATABASE_ROOT_USER_DEV }}
+          DATABASE_ROOT_PASSWORD: ${{ secrets.DATABASE_ROOT_PASSWORD_DEV }}
           DATABASE_USER: ${{ secrets.DATABASE_USER_DEV }}
           DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD_DEV }}
           DATABASE_NAME: ${{ secrets.DATABASE_NAME_DEV }}
+          EMAIL_TRANSPORTER: ${{ secrets.EMAIL_TRANSPORTER_DEV}}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD_DEV }}
