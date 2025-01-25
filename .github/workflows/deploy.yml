@@ -50,4 +50,4 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD_DEV }}
         run: |
           echo "Deploying to Development Environment"
-          docker-compose --env-file /dev/null -f docker-compose.yml up -d
+          docker-compose -f docker-compose.yml up -d
