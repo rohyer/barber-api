@@ -40,3 +40,7 @@ jobs:
           docker-compose -f docker-compose.yml up -d
         env:
           DATABASE_ROOT_PASSWORD: ${{ secrets.DATABASE_ROOT_PASSWORD }}
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST_DEV }}
+          DATABASE_USER: ${{ secrets.DATABASE_USER_DEV }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD_DEV }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME_DEV }}
