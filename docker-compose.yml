@@ -11,8 +11,6 @@ services:
     depends_on:
       - db
       - redis
-    env_file:
-      - .env
 
   app2:
     build: .
@@ -26,8 +24,6 @@ services:
     depends_on:
       - db
       - redis
-    env_file:
-      - .env
 
   db:
     image: mariadb:10.4.32
