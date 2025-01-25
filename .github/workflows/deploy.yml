@@ -34,12 +34,8 @@ jobs:
           curl -L https://github.com/docker/compose/releases/download/v2.30.3/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
 
-      - name: Check enviroment variables
-        run: |
-          echo "Checking environment variables:"
-          printenv | grep -i DATABASE
-          printenv | grep -i JWT_SECRET
-          printenv | grep -i EMAIL
+      # Configuração do Docker Compose passando as variáveis de ambiente
+      - name: Run Docker Compose for Deployment
         env:
           NODE_ENV: ${{ vars.NODE_ENV }}
           PORT: ${{ vars.PORT }}
@@ -52,21 +48,6 @@ jobs:
           DATABASE_NAME: ${{ secrets.DATABASE_NAME_DEV }}
           EMAIL_TRANSPORTER: ${{ secrets.EMAIL_TRANSPORTER_DEV}}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD_DEV }}
-
-      # Configuração do Docker Compose passando as variáveis de ambiente
-      - name: Run Docker Compose for Deployment
         run: |
           echo "Deploying to Development Environment"
           docker-compose --env-file /dev/null -f docker-compose.yml up -d
-        env:
-          NODE_ENV: ${{ vars.NODE_ENV }}
-          PORT: ${{ vars.PORT }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET_DEV }}
-          DATABASE_HOST: ${{ secrets.DATABASE_HOST_DEV }}
-          DATABASE_ROOT_USER: ${{ secrets.DATABASE_ROOT_USER_DEV }}
-          DATABASE_ROOT_PASSWORD: ${{ secrets.DATABASE_ROOT_PASSWORD_DEV }}
-          DATABASE_USER: ${{ secrets.DATABASE_USER_DEV }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD_DEV }}
-          DATABASE_NAME: ${{ secrets.DATABASE_NAME_DEV }}
-          EMAIL_TRANSPORTER: ${{ secrets.EMAIL_TRANSPORTER_DEV}}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD_DEV }}
