@@ -1,1 +1,1 @@
-# barber
+# barber-api

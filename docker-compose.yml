@@ -11,8 +11,6 @@ services:
     depends_on:
       - db
       - redis
-    env_file:
-      - .env
 
   app2:
     build: .
@@ -26,16 +24,18 @@ services:
     depends_on:
       - db
       - redis
-    env_file:
-      - .env
 
   db:
     image: mariadb:10.4.32
     container_name: barber-database-container
     environment:
       MARIADB_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MARIADB_USER: ${DATABASE_USER}
+      MARIADB_PASSWORD: ${DATABASE_PASSWORD}
+      MARIADB_DATABASE: ${DATABASE_NAME}
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./permissions.sql:/docker-entrypoint-initdb.d/permissions.sql
       - mariadb-data:/var/lib/mysql
 
   phpmyadmin:
