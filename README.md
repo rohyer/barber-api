@@ -16,7 +16,7 @@ Um sistema completo de agendamento para barbearias com painel administrativo, ge
 
 ### Users
 
-/api/users
+**/api/users**
   - POST: /register
   - POST: /login
   - PUT: /:id
@@ -25,7 +25,7 @@ Um sistema completo de agendamento para barbearias com painel administrativo, ge
 
 ### Services
 
-/api/services
+**/api/services**
   - GET: /
   - POST: /
   - PUT: /:id
@@ -33,7 +33,7 @@ Um sistema completo de agendamento para barbearias com painel administrativo, ge
 
 ### Employees
 
-/api/employees
+**/api/employees**
   - GET: /
   - POST: /
   - PUT: /:id
@@ -41,7 +41,7 @@ Um sistema completo de agendamento para barbearias com painel administrativo, ge
 
 ### Clients
 
-/api/clients
+**/api/clients**
   - GET: /
   - POST: /
   - PUT: /:id
@@ -49,7 +49,7 @@ Um sistema completo de agendamento para barbearias com painel administrativo, ge
 
 ### Customer Services
 
-/api/customer-services
+**/api/customer-services**
   - GET: /
   - POST: /
   - PUT: /:id
@@ -57,5 +57,5 @@ Um sistema completo de agendamento para barbearias com painel administrativo, ge
 
 ### E-mail
 
-/comfirm-email-change:
+**/comfirm-email-change**
   - GET: /
