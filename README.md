@@ -14,33 +14,48 @@ Um sistema completo de agendamento para barbearias com painel administrativo, ge
 
 ## Rotas de acesso
 
-### Clientes
+### Users
 
-- /api/users
+/api/users
   - POST: /register
   - POST: /login
   - PUT: /:id
   - PUT: /password/:id
   - PUT: /email/:id
-- /api/services
+
+### Services
+
+/api/services
   - GET: /
   - POST: /
   - PUT: /:id
   - DELETE: /:id
-- /api/employees
+
+### Employees
+
+/api/employees
   - GET: /
   - POST: /
   - PUT: /:id
   - DELETE: /:id
-- /api/clients
+
+### Clients
+
+/api/clients
   - GET: /
   - POST: /
   - PUT: /:id
   - DELETE: /:id
-- /api/customer-services
+
+### Customer Services
+
+/api/customer-services
   - GET: /
   - POST: /
   - PUT: /:id
   - DELETE: /:id
-- /comfirm-email-change:
+
+### E-mail
+
+/comfirm-email-change:
   - GET: /
