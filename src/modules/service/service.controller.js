@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
-const ServiceModel = require("../model/serviceModel");
-const redisClient = require("../config/redisClient");
+const ServiceModel = require("./service.model");
+const redisClient = require("../../config/redisClient");
 
 /**
  * @description Get services

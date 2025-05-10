@@ -1,4 +1,4 @@
-const ServiceModel = require("./serviceModel");
+const ServiceModel = require("../modules/service/service.model");
 const getDatabaseConnection = require("../config/db");
 
 jest.mock("../config/db");
