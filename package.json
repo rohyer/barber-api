@@ -4,8 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon -L backend/server.js",
-    "server": "nodemon backend/server.js",
+    "build": "tsc",
+    "start": "node build/server.js",
+    "dev": "nodemon -L src/server.ts",
     "test": "jest"
   },
   "author": "Guilherme R.",

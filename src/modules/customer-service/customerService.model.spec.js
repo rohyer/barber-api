@@ -1,5 +1,5 @@
-const CustomerServiceModel = require("./CustomerServiceModel");
-const getConnectionDatabase = require("../config/db");
+const CustomerServiceModel = require("./customerService.model");
+const getConnectionDatabase = require("../../config/db");
 
 jest.mock("../config/db");
 

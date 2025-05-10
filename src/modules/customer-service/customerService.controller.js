@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
-const CustomerServiceModel = require("../model/CustomerServiceModel");
-const redisClient = require("../config/redisClient");
+const CustomerServiceModel = require("./customerService.model");
+const redisClient = require("../../config/redisClient");
 
 /**
  * @description Get all customer services

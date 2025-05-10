@@ -1,4 +1,4 @@
-const EmployeeModel = require("./EmployeeModel");
+const EmployeeModel = require("../modules/employee/EmployeeModel");
 const getConnectionDatabase = require("../config/db");
 
 jest.mock("../config/db");
