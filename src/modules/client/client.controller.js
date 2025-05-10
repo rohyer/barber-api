@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
-const ClientModel = require("../model/ClientModel");
-const redisClient = require("../config/redisClient");
+const ClientModel = require("./client.model");
+const redisClient = require("../../config/redisClient");
 
 /**
  * @description Get all clients

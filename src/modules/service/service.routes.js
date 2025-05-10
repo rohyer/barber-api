@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { protect } = require("../middleware/authMiddleware");
-const { cacheMiddleware } = require("../middleware/cacheMiddleware");
+const { protect } = require("../../middleware/authMiddleware");
+const { cacheMiddleware } = require("../../middleware/cacheMiddleware");
 const {
   getServices,
   setService,
   updateService,
   deleteService
-} = require("../controllers/serviceController");
+} = require("./service.controller");
 
 router.get("/", protect, cacheMiddleware, getServices);
 

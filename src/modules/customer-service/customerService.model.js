@@ -1,5 +1,5 @@
-const getDatabaseConnection = require("../config/db");
-const redisClient = require("../config/redisClient");
+const getDatabaseConnection = require("../../config/db");
+const redisClient = require("../../config/redisClient");
 
 const CustomerServiceModel = {
   async getCustomerServices(idAdmin) {

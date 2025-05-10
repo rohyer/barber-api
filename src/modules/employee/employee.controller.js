@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
-const EmployeeModel = require("../model/EmployeeModel");
-const redisClient = require("../config/redisClient");
+const EmployeeModel = require("./employee.model");
+const redisClient = require("../../config/redisClient");
 
 /**
  * @description Get all employees

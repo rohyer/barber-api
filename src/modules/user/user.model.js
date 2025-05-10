@@ -1,4 +1,4 @@
-const getDatabaseConnection = require("../config/db");
+const getDatabaseConnection = require("../../config/db");
 
 const UserModel = {
   async addUser(name, email, password, city, state, phone) {
