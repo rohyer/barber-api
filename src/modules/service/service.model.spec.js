@@ -1,5 +1,5 @@
-const ServiceModel = require("../modules/service/service.model");
-const getDatabaseConnection = require("../config/db");
+import ServiceModel from "./service.model.js";
+import getDatabaseConnection from "../../shared/config/db.js";
 
 jest.mock("../config/db");
 
@@ -14,8 +14,8 @@ describe("ServiceModel", () => {
           info: "",
           serverStatus: 2,
           warningStatus: 2,
-          changedRows: 0
-        }
+          changedRows: 0,
+        },
       ]);
 
       const name = "Corte de cabelo";
@@ -28,7 +28,7 @@ describe("ServiceModel", () => {
 
       expect(mockExecute).toHaveBeenCalledWith(
         "INSERT INTO service (name, value, id_admin) VALUES (?, ?, ?)",
-        [name, value, idAdmin]
+        [name, value, idAdmin],
       );
       expect(result).toEqual({
         fieldCount: 0,
@@ -37,7 +37,7 @@ describe("ServiceModel", () => {
         info: "",
         serverStatus: 2,
         warningStatus: 2,
-        changedRows: 0
+        changedRows: 0,
       });
     });
   });
@@ -52,7 +52,7 @@ describe("ServiceModel", () => {
             value: "50.00",
             id_admin: 1,
             created_at: "2024-12-05T14:21:57.000Z",
-            updated_at: "2024-12-05T14:21:57.000Z"
+            updated_at: "2024-12-05T14:21:57.000Z",
           },
           {
             id: 1,
@@ -60,9 +60,9 @@ describe("ServiceModel", () => {
             value: "50.00",
             id_admin: 1,
             created_at: "2024-12-05T14:21:57.000Z",
-            updated_at: "2024-12-05T14:21:57.000Z"
-          }
-        ]
+            updated_at: "2024-12-05T14:21:57.000Z",
+          },
+        ],
       ]);
 
       getDatabaseConnection.mockReturnValue({ execute: mockExecute });
@@ -73,7 +73,7 @@ describe("ServiceModel", () => {
 
       expect(mockExecute).toHaveBeenCalledWith(
         "SELECT * FROM service WHERE id_admin = ?",
-        [idAdmin]
+        [idAdmin],
       );
       expect(result).toEqual([
         {
@@ -82,7 +82,7 @@ describe("ServiceModel", () => {
           value: "50.00",
           id_admin: 1,
           created_at: "2024-12-05T14:21:57.000Z",
-          updated_at: "2024-12-05T14:21:57.000Z"
+          updated_at: "2024-12-05T14:21:57.000Z",
         },
         {
           id: 1,
@@ -90,8 +90,8 @@ describe("ServiceModel", () => {
           value: "50.00",
           id_admin: 1,
           created_at: "2024-12-05T14:21:57.000Z",
-          updated_at: "2024-12-05T14:21:57.000Z"
-        }
+          updated_at: "2024-12-05T14:21:57.000Z",
+        },
       ]);
     });
   });
@@ -106,8 +106,8 @@ describe("ServiceModel", () => {
           info: "",
           serverStatus: 2,
           warningStatus: 2,
-          changedRows: 0
-        }
+          changedRows: 0,
+        },
       ]);
 
       getDatabaseConnection.mockReturnValue({ execute: mockExecute });
@@ -120,7 +120,7 @@ describe("ServiceModel", () => {
 
       expect(mockExecute).toHaveBeenCalledWith(
         "UPDATE service SET name = ?, value = ? WHERE id = ? LIMIT 1",
-        [name, value, id]
+        [name, value, id],
       );
       expect(result).toEqual({
         fieldCount: 0,
@@ -129,7 +129,7 @@ describe("ServiceModel", () => {
         info: "",
         serverStatus: 2,
         warningStatus: 2,
-        changedRows: 0
+        changedRows: 0,
       });
     });
   });
@@ -144,8 +144,8 @@ describe("ServiceModel", () => {
           info: "",
           serverStatus: 2,
           warningStatus: 0,
-          changedRows: 0
-        }
+          changedRows: 0,
+        },
       ]);
 
       getDatabaseConnection.mockReturnValue({ execute: mockExecute });
@@ -156,7 +156,7 @@ describe("ServiceModel", () => {
 
       expect(mockExecute).toHaveBeenCalledWith(
         "DELETE FROM service WHERE id = ?",
-        [id]
+        [id],
       );
       expect(mockExecute).toHaveBeenCalledTimes(1);
       expect(result).toEqual({
@@ -166,7 +166,7 @@ describe("ServiceModel", () => {
         info: "",
         serverStatus: 2,
         warningStatus: 0,
-        changedRows: 0
+        changedRows: 0,
       });
     });
   });

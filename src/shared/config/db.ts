@@ -1,6 +1,6 @@
-const mysql = require("mysql2");
+import mysql, { Pool } from "mysql2";
 
-let pool;
+let pool: Pool | undefined;
 
 const connectionDB = () => {
   try {
@@ -8,7 +8,7 @@ const connectionDB = () => {
       host: process.env.DATABASE_HOST,
       user: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME
+      database: process.env.DATABASE_NAME,
     });
 
     console.log(`MySQL conectado!`);
@@ -21,7 +21,7 @@ const connectionDB = () => {
 const getDatabaseConnection = () => {
   if (!pool) {
     throw new Error(
-      "Banco de dados não inicializado, chame connectionDB primeiro"
+      "Banco de dados não inicializado, chame connectionDB primeiro",
     );
   }
   return pool.promise();
@@ -29,4 +29,4 @@ const getDatabaseConnection = () => {
 
 connectionDB();
 
-module.exports = getDatabaseConnection;
+export default getDatabaseConnection;
