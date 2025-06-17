@@ -1,13 +1,14 @@
-const express = require("express");
+import express from "express";
+
 const router = express.Router();
-const {
+import {
   getEmployees,
   setEmployee,
   updateEmployee,
-  deleteEmployee
-} = require("./employee.controller");
-const { protect } = require("../../middleware/authMiddleware");
-const { cacheMiddleware } = require("../../middleware/cacheMiddleware");
+  deleteEmployee,
+} from "./employee.controller.js";
+import { protect } from "../../shared/middleware/auth-middleware.js";
+import { cacheMiddleware } from "../../shared/middleware/cache-middleware.js";
 
 router.get("/", protect, cacheMiddleware, getEmployees);
 
@@ -17,4 +18,4 @@ router.put("/:id", protect, updateEmployee);
 
 router.delete("/:id", protect, deleteEmployee);
 
-module.exports = router;
+export default router;

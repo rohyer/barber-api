@@ -1,13 +1,13 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const { protect } = require("../../middleware/authMiddleware");
-const { cacheMiddleware } = require("../../middleware/cacheMiddleware");
-const {
+import { protect } from "../../shared/middleware/auth-middleware.js";
+import { cacheMiddleware } from "../../shared/middleware/cache-middleware.js";
+import {
   getServices,
   setService,
   updateService,
-  deleteService
-} = require("./service.controller");
+  deleteService,
+} from "./service.controller.js";
 
 router.get("/", protect, cacheMiddleware, getServices);
 
@@ -17,4 +17,4 @@ router.put("/:id", protect, updateService);
 
 router.delete("/:id", protect, deleteService);
 
-module.exports = router;
+export default router;

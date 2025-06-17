@@ -1,5 +1,5 @@
-const CustomerServiceModel = require("./customerService.model");
-const getConnectionDatabase = require("../../config/db");
+import CustomerServiceModel from "./customer-service.model.js";
+import getConnectionDatabase from "../../shared/config/db";
 
 jest.mock("../config/db");
 
@@ -18,7 +18,7 @@ describe("CustomerServicModel", () => {
             id_employee: 5,
             id_admin: 1,
             created_at: "2024-12-05T14:21:00.000Z",
-            updated_at: "2024-12-05T14:21:00.000Z"
+            updated_at: "2024-12-05T14:21:00.000Z",
           },
           {
             id: 2,
@@ -30,9 +30,9 @@ describe("CustomerServicModel", () => {
             id_employee: 5,
             id_admin: 1,
             created_at: "2024-12-05T14:21:00.000Z",
-            updated_at: "2024-12-05T14:21:00.000Z"
-          }
-        ]
+            updated_at: "2024-12-05T14:21:00.000Z",
+          },
+        ],
       ]);
 
       getConnectionDatabase.mockReturnValue({ execute: mockExecute });
@@ -43,7 +43,7 @@ describe("CustomerServicModel", () => {
 
       expect(mockExecute).toHaveBeenCalledWith(
         "SELECT * FROM customer_service WHERE id_admin = ?",
-        [idAdmin]
+        [idAdmin],
       );
       expect(result).toEqual([
         {
@@ -56,7 +56,7 @@ describe("CustomerServicModel", () => {
           id_employee: 5,
           id_admin: 1,
           created_at: "2024-12-05T14:21:00.000Z",
-          updated_at: "2024-12-05T14:21:00.000Z"
+          updated_at: "2024-12-05T14:21:00.000Z",
         },
         {
           id: 2,
@@ -68,8 +68,8 @@ describe("CustomerServicModel", () => {
           id_employee: 5,
           id_admin: 1,
           created_at: "2024-12-05T14:21:00.000Z",
-          updated_at: "2024-12-05T14:21:00.000Z"
-        }
+          updated_at: "2024-12-05T14:21:00.000Z",
+        },
       ]);
     });
   });
@@ -88,9 +88,9 @@ describe("CustomerServicModel", () => {
             id_employee: 5,
             id_admin: 1,
             created_at: "2024-12-05T14:21:00.000Z",
-            updated_at: "2024-12-05T14:21:00.000Z"
-          }
-        ]
+            updated_at: "2024-12-05T14:21:00.000Z",
+          },
+        ],
       ]);
 
       getConnectionDatabase.mockReturnValue({ execute: mockExecute });
@@ -101,7 +101,7 @@ describe("CustomerServicModel", () => {
 
       expect(mockExecute).toHaveBeenCalledWith(
         "SELECT * FROM customer_service WHERE id = ? LIMIT 1",
-        [id]
+        [id],
       );
       expect(mockExecute).toHaveBeenCalledTimes(1);
       expect(result).toEqual([
@@ -115,8 +115,8 @@ describe("CustomerServicModel", () => {
           id_employee: 5,
           id_admin: 1,
           created_at: "2024-12-05T14:21:00.000Z",
-          updated_at: "2024-12-05T14:21:00.000Z"
-        }
+          updated_at: "2024-12-05T14:21:00.000Z",
+        },
       ]);
     });
   });
@@ -131,8 +131,8 @@ describe("CustomerServicModel", () => {
           info: "",
           serverStatus: 2,
           warningStatus: 0,
-          changedRows: 0
-        }
+          changedRows: 0,
+        },
       ]);
 
       getConnectionDatabase.mockReturnValue({ execute: mockExecute });
@@ -150,12 +150,12 @@ describe("CustomerServicModel", () => {
         idService,
         idClient,
         idEmployee,
-        idAdmin
+        idAdmin,
       );
 
       expect(mockExecute).toHaveBeenCalledWith(
         "INSERT INTO customer_service (date, time, id_service, id_client, id_employee, id_admin) VALUES (?, ?, ?, ?, ?, ?)",
-        [date, time, idService, idClient, idEmployee, idAdmin]
+        [date, time, idService, idClient, idEmployee, idAdmin],
       );
       expect(result).toEqual({
         fieldCount: 0,
@@ -164,7 +164,7 @@ describe("CustomerServicModel", () => {
         info: "",
         serverStatus: 2,
         warningStatus: 0,
-        changedRows: 0
+        changedRows: 0,
       });
     });
   });
@@ -179,8 +179,8 @@ describe("CustomerServicModel", () => {
           info: "Rows matched: 1  Changed: 0  Warnings: 0",
           serverStatus: 2,
           warningStatus: 0,
-          changedRows: 0
-        }
+          changedRows: 0,
+        },
       ]);
 
       getConnectionDatabase.mockReturnValue({ execute: mockExecute });
@@ -198,12 +198,12 @@ describe("CustomerServicModel", () => {
         status,
         idService,
         idEmployee,
-        id
+        id,
       );
 
       expect(mockExecute).toHaveBeenCalledWith(
         "UPDATE customer_service SET date = ?, time = ?, status = ?, id_service = ?, id_employee = ? WHERE id = ?",
-        [date, time, status, idService, idEmployee, id]
+        [date, time, status, idService, idEmployee, id],
       );
       expect(result).toEqual({
         fieldCount: 0,
@@ -212,7 +212,7 @@ describe("CustomerServicModel", () => {
         info: "Rows matched: 1  Changed: 0  Warnings: 0",
         serverStatus: 2,
         warningStatus: 0,
-        changedRows: 0
+        changedRows: 0,
       });
     });
   });
@@ -227,8 +227,8 @@ describe("CustomerServicModel", () => {
           info: "",
           serverStatus: 2,
           warningStatus: 0,
-          changedRows: 0
-        }
+          changedRows: 0,
+        },
       ]);
 
       getConnectionDatabase.mockReturnValue({ execute: mockExecute });
@@ -239,7 +239,7 @@ describe("CustomerServicModel", () => {
 
       expect(mockExecute).toHaveBeenCalledWith(
         "DELETE FROM customer_service WHERE id = ?",
-        [id]
+        [id],
       );
       expect(result).toEqual({
         fieldCount: 0,
@@ -248,7 +248,7 @@ describe("CustomerServicModel", () => {
         info: "",
         serverStatus: 2,
         warningStatus: 0,
-        changedRows: 0
+        changedRows: 0,
       });
     });
   });

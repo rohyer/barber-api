@@ -1,5 +1,5 @@
-const EmployeeModel = require("../modules/employee/EmployeeModel");
-const getConnectionDatabase = require("../config/db");
+import EmployeeModel from "./employee.model.js";
+import getConnectionDatabase from "../../shared/config/db.js";
 
 jest.mock("../config/db");
 
@@ -15,7 +15,7 @@ describe("EmployeeModel", () => {
             sex: "M",
             phone: "(99) 99999-9999",
             birth: "1996-05-01T03:00:00.000Z",
-            id_admin: 35
+            id_admin: 35,
           },
           {
             id: 2,
@@ -24,9 +24,9 @@ describe("EmployeeModel", () => {
             sex: "M",
             phone: "(99) 99999-9999",
             birth: "1996-05-01T03:00:00.000Z",
-            id_admin: 35
-          }
-        ]
+            id_admin: 35,
+          },
+        ],
       ]);
 
       getConnectionDatabase.mockReturnValue({ execute: mockExecute });
@@ -37,7 +37,7 @@ describe("EmployeeModel", () => {
 
       expect(mockExecute).toHaveBeenCalledWith(
         "SELECT * FROM employee WHERE id_admin = ?",
-        [idAdmin]
+        [idAdmin],
       );
       expect(result).toEqual([
         {
@@ -47,7 +47,7 @@ describe("EmployeeModel", () => {
           sex: "M",
           phone: "(99) 99999-9999",
           birth: "1996-05-01T03:00:00.000Z",
-          id_admin: 35
+          id_admin: 35,
         },
         {
           id: 2,
@@ -56,8 +56,8 @@ describe("EmployeeModel", () => {
           sex: "M",
           phone: "(99) 99999-9999",
           birth: "1996-05-01T03:00:00.000Z",
-          id_admin: 35
-        }
+          id_admin: 35,
+        },
       ]);
     });
   });
@@ -73,9 +73,9 @@ describe("EmployeeModel", () => {
             sex: "M",
             phone: "(99) 99999-9999",
             birth: "1996-05-01T03:00:00.000Z",
-            id_admin: 35
-          }
-        ]
+            id_admin: 35,
+          },
+        ],
       ]);
 
       getConnectionDatabase.mockReturnValue({ execute: mockExecute });
@@ -86,7 +86,7 @@ describe("EmployeeModel", () => {
 
       expect(mockExecute).toHaveBeenCalledWith(
         "SELECT * FROM employee WHERE id = ? LIMIT 1",
-        [id]
+        [id],
       );
       expect(mockExecute).toHaveBeenCalledTimes(1);
       expect(result).toEqual([
@@ -97,8 +97,8 @@ describe("EmployeeModel", () => {
           sex: "M",
           phone: "(99) 99999-9999",
           birth: "1996-05-01T03:00:00.000Z",
-          id_admin: 35
-        }
+          id_admin: 35,
+        },
       ]);
     });
   });
@@ -113,8 +113,8 @@ describe("EmployeeModel", () => {
           info: "",
           serverStatus: 2,
           warningStatus: 2,
-          changedRows: 0
-        }
+          changedRows: 0,
+        },
       ]);
 
       getConnectionDatabase.mockReturnValue({ execute: mockExecute });
@@ -132,12 +132,12 @@ describe("EmployeeModel", () => {
         sex,
         phone,
         birth,
-        idAdmin
+        idAdmin,
       );
 
       expect(mockExecute).toHaveBeenCalledWith(
         "INSERT INTO employee (name, address, sex, phone, birth, id_admin) VALUES (?, ?, ?, ?, ?, ?)",
-        [name, address, sex, phone, birth, idAdmin]
+        [name, address, sex, phone, birth, idAdmin],
       );
       expect(mockExecute).toHaveBeenCalledTimes(1);
       expect(result).toEqual({
@@ -147,7 +147,7 @@ describe("EmployeeModel", () => {
         info: "",
         serverStatus: 2,
         warningStatus: 2,
-        changedRows: 0
+        changedRows: 0,
       });
     });
   });
@@ -162,8 +162,8 @@ describe("EmployeeModel", () => {
           info: "",
           serverStatus: 2,
           warningStatus: 2,
-          changedRows: 0
-        }
+          changedRows: 0,
+        },
       ]);
 
       getConnectionDatabase.mockReturnValue({ execute: mockExecute });
@@ -181,12 +181,12 @@ describe("EmployeeModel", () => {
         sex,
         phone,
         birth,
-        id
+        id,
       );
 
       expect(mockExecute).toHaveBeenCalledWith(
         "UPDATE employee SET name = ?, address = ?, sex = ?, phone = ?, birth = ? WHERE id = ?",
-        [name, address, sex, phone, birth, id]
+        [name, address, sex, phone, birth, id],
       );
       expect(mockExecute).toHaveBeenCalledTimes(1);
       expect(result).toEqual({
@@ -196,7 +196,7 @@ describe("EmployeeModel", () => {
         info: "",
         serverStatus: 2,
         warningStatus: 2,
-        changedRows: 0
+        changedRows: 0,
       });
     });
   });
