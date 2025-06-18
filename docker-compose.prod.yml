@@ -1,50 +1,51 @@
+# run: docker-compose --file docker-compose.prod.yml up
 services:
   app1:
-    build: .
+  # TODO: replace build: . to an image on Docker Hub or GitHub Container Registry
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     environment:
       - APP_NAME=app1
-    command: npm start
-    # ports:
-    #   - "5001:5000"
-    volumes:
-      - .:/app
     depends_on:
       - db
       - redis
+    restart: always
 
   app2:
-    build: .
+  # TODO: replace build: . to an image on Docker Hub or GitHub Container Registry
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     environment:
       - APP_NAME=app2
-    command: npm start
-    # ports:
-    #   - "5002:5000"
-    volumes:
-      - .:/app
     depends_on:
       - db
       - redis
+    restart: always
 
   db:
     image: mariadb:10.4.32
     container_name: barber-database-container
+    # Replace env variables for Docker secrets or another option
     environment:
       MARIADB_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
       MARIADB_USER: ${DATABASE_USER}
       MARIADB_PASSWORD: ${DATABASE_PASSWORD}
       MARIADB_DATABASE: ${DATABASE_NAME}
+    # Check if this doesn't run on restarts
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./permissions.sql:/docker-entrypoint-initdb.d/permissions.sql
       - mariadb-data:/var/lib/mysql
+    restart: always
 
+  # TODO: remove phpmyadmin on production
   phpmyadmin:
     depends_on:
       - db
     image: phpmyadmin
     restart: always
-    ports:
-      - "8080:80"
     environment:
       PMA_HOST: ${DATABASE_HOST}
       MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
@@ -52,14 +53,14 @@ services:
   redis:
     image: redis
     container_name: barber-redis-container
-    ports:
-      - "6379:6379"
+    restart: always
     volumes:
       - redis-data:/data
 
   nginx:
     image: nginx:latest
     container_name: nginx-proxy
+    restart: always
     ports:
       - 80:80
     volumes:
