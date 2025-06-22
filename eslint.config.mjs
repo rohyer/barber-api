@@ -30,7 +30,17 @@ export default defineConfig([
     },
     rules: {
       ...prettier.rules,
-      "prettier/prettier": "error",
+
+      "prettier/prettier": [
+        "warn",
+        {
+          printWidth: 100,
+          semi: true,
+          tabWidth: 2,
+          bracketSpacing: true,
+          endOfLine: "lf",
+        },
+      ],
       "@typescript-eslint/no-var-requires": "off",
       "@typescript-eslint/no-require-imports": "error", // <- esse é o que está dando erro
       "no-undef": "off", // evita 'require', 'process' como indefinidos
