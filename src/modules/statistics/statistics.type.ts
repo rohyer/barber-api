@@ -21,6 +21,11 @@ export interface IClientsStatistics {
 
 export type IDateStatistics = number;
 
+export interface IMonthsStatistics {
+  month: number;
+  amountByMonth: number;
+}
+
 export interface IAllStatistics {
   customerServicesByServices: IServicesStatistics[];
   customerServicesByEmployees: IEmployeesStatistics[];

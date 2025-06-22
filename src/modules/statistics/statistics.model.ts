@@ -9,6 +9,7 @@ import {
   IDateStatistics,
   IStatisticsParams,
   IAllStatisticsParams,
+  IMonthsStatistics,
 } from "./statistics.type.js";
 
 const getCustomerServicesByServices = async ({
@@ -71,6 +72,21 @@ const getCustomerServicesByDate = async ({
   return result[0].amount as IDateStatistics;
 };
 
+const getCustomerServicesByMonths = async ({
+  id,
+  status,
+  date,
+}: IStatisticsParams): Promise<IMonthsStatistics[]> => {
+  const db = getDatabaseConnection();
+
+  const [result] = await db.execute<RowDataPacket[]>(
+    "SELECT MONTH(date) AS month, COUNT(*) AS amountByMonth FROM customer_service cs WHERE cs.id_admin = ? AND cs.status = ? AND YEAR(date) = ? GROUP BY MONTH(date) ORDER BY month ASC",
+    [id, status, date],
+  );
+
+  return result as IMonthsStatistics[];
+};
+
 export const getAllStatistics = async ({
   id,
   month = new Date().getMonth() + 1,
@@ -104,16 +120,24 @@ export const getAllStatistics = async ({
     date,
   });
 
+  const customerServicesByMonthsPromise = getCustomerServicesByMonths({
+    id,
+    status,
+    date,
+  });
+
   const [
     customerServicesByServices,
     customerServicesByEmployees,
     customerServicesByClients,
     customerServicesByDate,
+    customerServicesByMonths,
   ] = await Promise.all([
     customerServicesByServicesPromise,
     customerServicesByEmployeesPromise,
     customerServicesByClientsPromise,
     customerServicesByDatePromise,
+    customerServicesByMonthsPromise,
   ]);
 
   const statistics = {
@@ -121,6 +145,7 @@ export const getAllStatistics = async ({
     customerServicesByEmployees,
     customerServicesByClients,
     customerServicesByDate,
+    customerServicesByMonths,
   };
 
   return statistics;
