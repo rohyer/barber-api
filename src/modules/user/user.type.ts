@@ -2,7 +2,7 @@ export interface IUser {
   id: number;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   city: string;
   state: string;
   phone: string;
@@ -10,4 +10,6 @@ export interface IUser {
   emailToken: string | null;
   emailTokenExpires: Date | null;
   status: 0 | 1;
+  createdAt: Date;
+  updatedAt: Date;
 }

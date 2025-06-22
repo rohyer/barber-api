@@ -4,24 +4,26 @@ import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { IUser } from "./user.type.js";
 
 const UserModel = {
-  async getUser(email: IUser["email"]) {
+  async getUser(email: IUser["email"]): Promise<IUser[]> {
     const db = getDatabaseConnection();
 
-    const [result] = await db.execute<(IUser & RowDataPacket)[]>(
-      "SELECT * FROM admin WHERE email = ? LIMIT 1",
+    const [result] = await db.execute<RowDataPacket[]>(
+      "SELECT id, name, email, password, city, state, phone, new_email AS newEmail, email_token AS emailToken, email_token_expires AS emailTokenExpires, status, created_at AS createdAt, updated_at AS updatedAt FROM admin WHERE email = ? LIMIT 1",
       [email],
     );
-    return result;
+
+    return result as IUser[];
   },
 
-  async getUserById(id: IUser["id"]): Promise<RowDataPacket[]> {
+  async getUserById(id: IUser["id"]): Promise<IUser[]> {
     const db = getDatabaseConnection();
 
-    const [result] = await db.execute<(IUser & RowDataPacket)[]>(
-      "SELECT * FROM admin WHERE id = ? LIMIT 1",
+    const [result] = await db.execute<RowDataPacket[]>(
+      "SELECT id, name, email, password, city, state, phone, new_email AS newEmail, email_token AS emailToken, email_token_expires AS emailTokenExpires, status, created_at AS createdAt, updated_at AS updatedAt FROM admin WHERE id = ? LIMIT 1",
       [id],
     );
-    return result;
+
+    return result as IUser[];
   },
 
   async addUser({
@@ -31,16 +33,14 @@ const UserModel = {
     city,
     state,
     phone,
-  }: Omit<
-    IUser,
-    "id" | "newEmail" | "emailToken" | "emailTokenExpires" | "status"
-  >) {
+  }: Omit<IUser, "id" | "newEmail" | "emailToken" | "emailTokenExpires" | "status">) {
     const db = getDatabaseConnection();
 
     const [result] = await db.execute<ResultSetHeader>(
       "INSERT INTO admin (name, email, password, city, state, phone) VALUES (?, ?, ?, ?, ?, ?)",
       [name, email, password, city, state, phone],
     );
+
     return result;
   },
 
@@ -52,12 +52,7 @@ const UserModel = {
     id,
   }: Omit<
     IUser,
-    | "email"
-    | "newEmail"
-    | "password"
-    | "emailToken"
-    | "emailTokenExpires"
-    | "status"
+    "email" | "newEmail" | "password" | "emailToken" | "emailTokenExpires" | "status"
   >) {
     const db = getDatabaseConnection();
 
@@ -65,6 +60,7 @@ const UserModel = {
       "UPDATE admin SET name = ?, city = ?, state = ?, phone = ? WHERE id = ?",
       [name, city, state, phone, id],
     );
+
     return result;
   },
 
@@ -75,6 +71,7 @@ const UserModel = {
       "UPDATE admin SET password = ? WHERE id = ?",
       [password, id],
     );
+
     return result;
   },
 
@@ -83,10 +80,7 @@ const UserModel = {
     emailToken,
     emailTokenExpires,
     id,
-  }: Omit<
-    IUser,
-    "name" | "email" | "password" | "city" | "state" | "phone" | "status"
-  >) {
+  }: Omit<IUser, "name" | "email" | "password" | "city" | "state" | "phone" | "status">) {
     const db = getDatabaseConnection();
 
     await db.execute<ResultSetHeader>(
@@ -95,14 +89,15 @@ const UserModel = {
     );
   },
 
-  async getUserByEmailToken(emailToken: IUser["emailToken"]) {
+  async getUserByEmailToken(emailToken: IUser["emailToken"]): Promise<IUser> {
     const db = getDatabaseConnection();
 
-    const [result] = await db.execute<(IUser & RowDataPacket)[]>(
-      "SELECT * FROM admin where email_token = ?",
+    const [result] = await db.execute<RowDataPacket[]>(
+      "SELECT id, name, email, password, city, state, phone, new_email AS newEmail, email_token AS emailToken, email_token_expires AS emailTokenExpires, status, created_at AS createdAt, updated_at AS updatedAt FROM admin where email_token = ?",
       [emailToken],
     );
-    return result[0];
+
+    return result[0] as IUser;
   },
 
   async updateUserEmail(newEmail: IUser["newEmail"], id: IUser["id"]) {
