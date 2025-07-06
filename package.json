@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx watch src/server.ts",
+    "dev": "nodemon --legacy-watch --ext ts,js,mjs,cjs,json --watch src --exec \"tsx src/server.ts\"",
     "start": "node build/server.js",
     "test": "jest",
     "lint": "eslint . --ext .ts"

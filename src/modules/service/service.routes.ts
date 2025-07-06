@@ -1,13 +1,8 @@
 import express from "express";
 const router = express.Router();
-import { protect } from "../../shared/middleware/auth-middleware.js";
-import { cacheMiddleware } from "../../shared/middleware/cache-middleware.js";
-import {
-  getServices,
-  setService,
-  updateService,
-  deleteService,
-} from "./service.controller.js";
+import { protect } from "../../shared/middleware/auth.js";
+import { cacheMiddleware } from "../../shared/middleware/cache.js";
+import { getServices, setService, updateService, deleteService } from "./service.controller.js";
 
 router.get("/", protect, cacheMiddleware, getServices);
 

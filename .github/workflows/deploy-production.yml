@@ -110,4 +110,4 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD_PROD }}
         run: |
           echo "Deploying to Production Environment"
-          docker-compose -f docker-compose.yml up -d
+          docker-compose -f docker-compose.dev.yml up -d
