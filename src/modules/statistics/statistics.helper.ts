@@ -1,9 +1,9 @@
 export const formatMonthYearForLike = (month: number, year: number) => {
-  const stringMonth = month.toString();
+    const stringMonth = month.toString();
 
-  const fullMonth = stringMonth.padStart(2, "0");
+    const fullMonth = stringMonth.padStart(2, "0");
 
-  const date = `${year}-${fullMonth}-__`;
+    const date = `${year}-${fullMonth}-__`;
 
-  return date;
+    return date;
 };
