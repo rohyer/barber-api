@@ -1,15 +1,16 @@
 export interface IUser {
-  id: number;
-  name: string;
-  email: string;
-  password?: string;
-  city: string;
-  state: string;
-  phone: string;
-  newEmail: string | null;
-  emailToken: string | null;
-  emailTokenExpires: Date | null;
-  status: 0 | 1;
-  createdAt: Date;
-  updatedAt: Date;
+    id: number;
+    name: string;
+    email: string;
+    password?: string;
+    city: string;
+    state: string;
+    phone: string;
+    newEmail: string | null;
+    emailToken: string | null;
+    emailTokenExpires: Date | null;
+    status: 0 | 1;
+    premiumExpiresAt: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
 }

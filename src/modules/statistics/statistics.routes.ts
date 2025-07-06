@@ -1,5 +1,5 @@
 import express from "express";
-import { protect } from "../../shared/middleware/auth-middleware.js";
+import { protect } from "../../shared/middleware/auth.js";
 import { getAllStatisticsController } from "./statistics.controller.js";
 import { protectPremium } from "../../shared/middleware/auth-premium.js";
 

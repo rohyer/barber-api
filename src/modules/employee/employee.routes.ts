@@ -2,13 +2,13 @@ import express from "express";
 
 const router = express.Router();
 import {
-  getEmployees,
-  setEmployee,
-  updateEmployee,
-  deleteEmployee,
+    getEmployees,
+    setEmployee,
+    updateEmployee,
+    deleteEmployee,
 } from "./employee.controller.js";
-import { protect } from "../../shared/middleware/auth-middleware.js";
-import { cacheMiddleware } from "../../shared/middleware/cache-middleware.js";
+import { protect } from "../../shared/middleware/auth.js";
+import { cacheMiddleware } from "../../shared/middleware/cache.js";
 
 router.get("/", protect, cacheMiddleware, getEmployees);
 
