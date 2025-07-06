@@ -40,7 +40,7 @@ services:
       MARIADB_DATABASE: ${DATABASE_NAME}
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./permissions.sql:/docker-entrypoint-initdb.d/permissions.sql
+      # - ./permissions.sql:/docker-entrypoint-initdb.d/permissions.sql
       - mariadb-data:/var/lib/mysql
 
   phpmyadmin:
