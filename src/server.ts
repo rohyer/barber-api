@@ -10,6 +10,7 @@ import clientRouter from "./modules/client/client.routes.js";
 import customerServiceRouter from "./modules/customer-service/customer-service.routes.js";
 import statisticsRouter from "./modules/statistics/statistics.routes.js";
 import cors, { CorsOptions } from "cors";
+import { errorHandler } from "./shared/middleware/error.js";
 
 const port = process.env.PORT || 5000;
 
@@ -44,5 +45,7 @@ app.use("/api/customer-services", customerServiceRouter);
 app.use("/api/statistics", statisticsRouter);
 
 app.get("/confirm-email-change", confirmEmailChange);
+
+app.use(errorHandler);
 
 app.listen(port, () => console.log(`Instance ${process.env.APP_NAME} started on port ${port}`));
