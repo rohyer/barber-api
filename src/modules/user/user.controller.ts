@@ -95,7 +95,12 @@ export const loginUser = asyncHandler(async (req: ExpressRequest, res: ExpressRe
 
     // Verifica se o usuário existe e se a senha é correta
     if (userExists.length > 0 && (await bcrypt.compare(password, userExists[0].password))) {
-        res.json({ ...userExists[0], token: generateToken(userExists[0].id) });
+        res.json({
+            data: {
+                user: { ...userExists[0] },
+                token: generateToken(userExists[0].id),
+            },
+        });
     } else {
         res.status(400);
         throw new Error("Acessos incorretos");
