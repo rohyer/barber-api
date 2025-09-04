@@ -44,6 +44,8 @@ export default defineConfig([
             "@typescript-eslint/no-var-requires": "off",
             "@typescript-eslint/no-require-imports": "error", // <- esse é o que está dando erro
             "no-undef": "off", // evita 'require', 'process' como indefinidos
+            "no-unused-vars": "off",
+            "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
         },
     },
     { ignores: ["node_modules", "build", "dist"] },
