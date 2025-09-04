@@ -2,25 +2,41 @@ import asyncHandler from "express-async-handler";
 import ClientModel from "./client.model.js";
 import redisClient from "../../shared/config/redis-client.js";
 import { AuthenticatedRequest } from "../../shared/types/express.type.js";
-import { Response as ExpressResponse } from "express";
+import { Response as ExpressResponse, NextFunction } from "express";
+import { createError } from "../../shared/utils/createError.js";
+import { successHandler } from "../../shared/utils/successHandler.js";
 
 /**
  * @description Get all clients
  * @route       GET /api/clients
  * @access      Private
  */
-export const getClients = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
-    if (!req.user) {
-        res.status(401);
-        throw new Error("Usuário não autenticado!");
-    }
+export const getClients = asyncHandler(
+    async (req: AuthenticatedRequest, res: ExpressResponse, next: NextFunction) => {
+        if (!req.user) {
+            const error = {
+                name: "UserNotAuthenticated",
+                message: "Usuário não autenticado.",
+                status: 401,
+            };
 
-    const clients = await ClientModel.getClients(req.user.id);
+            return next(createError(error));
+        }
 
-    if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(clients), { EX: 300 });
+        const clients = await ClientModel.getClients(req.user.id);
 
-    res.status(200).json(clients);
-});
+        if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(clients), { EX: 300 });
+
+        const data = {
+            status: 200,
+            success: true,
+            message: "Clientes listados com sucesso.",
+            data: clients,
+        };
+
+        successHandler(res, data);
+    },
+);
 
 /**
  * @description Register client
