@@ -9,12 +9,24 @@ import employeeRouter from "./modules/employee/employee.routes.js";
 import clientRouter from "./modules/client/client.routes.js";
 import customerServiceRouter from "./modules/customer-service/customer-service.routes.js";
 import statisticsRouter from "./modules/statistics/statistics.routes.js";
+import cors, { CorsOptions } from "cors";
 
 const port = process.env.PORT || 5000;
+
+const corsOptions: CorsOptions = {
+    origin:
+        process.env.NODE_ENV === "production" ? "https://meuapp.com.br" : "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+    credentials: true,
+    maxAge: 3600,
+};
 
 connectionDB();
 
 const app = express();
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
