@@ -27,14 +27,13 @@ export const getClients = asyncHandler(
 
         if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(clients), { EX: 300 });
 
-        const data = {
+        const responseData = {
             status: 200,
-            success: true,
             message: "Clientes listados com sucesso.",
             data: clients,
         };
 
-        successHandler(res, data);
+        successHandler(res, responseData);
     },
 );
 
