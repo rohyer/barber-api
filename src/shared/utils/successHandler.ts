@@ -2,7 +2,6 @@ import { Response as ExpressResponse } from "express";
 
 export type SuccessHandler = {
     status: number;
-    success: boolean;
     message: string;
     data: any;
 };
