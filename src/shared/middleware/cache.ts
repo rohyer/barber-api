@@ -1,6 +1,7 @@
 import redisClient from "../config/redis-client.js";
 import { AuthenticatedRequest } from "../types/express.type.js";
 import { Response as ExpressResponse, NextFunction } from "express";
+import { successHandler } from "../utils/successHandler.js";
 
 export const cacheMiddleware = async (
     req: AuthenticatedRequest,
@@ -22,11 +23,13 @@ export const cacheMiddleware = async (
         req.cacheKey = cacheKey;
 
         if (cachedData) {
-            console.log(`Resposta do cache para ${cachedData}`);
-            res.json(JSON.parse(cachedData));
+            successHandler(res, {
+                status: 200,
+                message: "Requisição feita com sucesso",
+                data: JSON.parse(cachedData),
+            });
         }
 
-        // Continua para a lógica principal se não houver cache
         next();
     } catch (error) {
         console.error(`Erro ao verificar o cache ${prefix}`, error);
