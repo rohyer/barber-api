@@ -33,7 +33,7 @@ const ClientModel = {
         address,
         birth,
         idAdmin,
-    }: Omit<IClientModel, "id">): Promise<ResultSetHeader> {
+    }: Omit<IClientModel, "id">): Promise<IClientModel> {
         const db = getDatabaseConnection();
 
         const [result] = await db.execute<ResultSetHeader>(
@@ -41,8 +41,11 @@ const ClientModel = {
             [name, sex, phone, address, birth, idAdmin],
         );
 
+        const data = { id: result.insertId, name, sex, phone, address, birth, idAdmin };
+
         await redisClient.del(`clients:user:${idAdmin}`);
-        return result;
+
+        return data;
     },
 
     async updateClient({ id, name, sex, phone, address, birth, idAdmin }: IClientModel) {
