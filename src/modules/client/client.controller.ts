@@ -71,9 +71,7 @@ export const registerClient = asyncHandler(
         res.json({
             success: true,
             message: "Cliente cadastrado com sucesso!",
-            data: {
-                userId: result.insertId,
-            },
+            data: { ...result },
         });
     },
 );
@@ -110,25 +108,24 @@ export const updateClient = asyncHandler(
         }
 
         const clientData = {
-            id: req.user.id,
+            id: Number(req.params.id),
             name,
             sex,
             phone,
             address,
             birth,
-            idAdmin: Number(req.params.id),
+            idAdmin: req.user.id,
         };
 
-        const result = await ClientModel.updateClient(clientData);
+        await ClientModel.updateClient(clientData);
 
-        res.status(200);
-        res.json({
-            success: true,
-            message: "Cliente atualizado com sucesso!",
-            data: {
-                affectedRows: result.affectedRows,
-            },
-        });
+        const responseData = {
+            status: 200,
+            message: "Cliente atualizado com sucesso.",
+            data: clientData,
+        };
+
+        successHandler(res, responseData);
     },
 );
 
