@@ -1,19 +1,31 @@
 import getDatabaseConnection from "../../shared/config/db.js";
 import redisClient from "../../shared/config/redis-client.js";
-import { IClientModel } from "./client.types.js";
-import { ResultSetHeader, RowDataPacket } from "mysql2";
+import { IClienteModelResponse, IClientModel } from "./client.types.js";
+import { QueryResult, ResultSetHeader, RowDataPacket } from "mysql2";
 
 const ClientModel = {
     async getClients(
         idAdmin: IClientModel["idAdmin"],
-    ): Promise<(IClientModel & RowDataPacket)[] | null> {
+        offset: string,
+    ): Promise<IClienteModelResponse | null> {
         const db = getDatabaseConnection();
 
         const [result] = await db.execute<(IClientModel & RowDataPacket)[]>(
-            "SELECT id, name, sex, phone, address, birth FROM client WHERE id_admin = ?",
+            "SELECT id, name, sex, phone, address, birth FROM client WHERE id_admin = ? ORDER BY id DESC LIMIT 10 OFFSET ?",
+            [idAdmin, offset],
+        );
+
+        const [rows] = await db.execute<RowDataPacket[]>(
+            "SELECT COUNT(*) AS total FROM client WHERE id_admin = ?",
             [idAdmin],
         );
-        return result;
+
+        const total = rows[0].total as number;
+
+        return {
+            clients: result,
+            total,
+        };
     },
 
     async getClientById(id: IClientModel["id"]): Promise<(IClientModel & RowDataPacket)[] | null> {
@@ -33,7 +45,7 @@ const ClientModel = {
         address,
         birth,
         idAdmin,
-    }: Omit<IClientModel, "id">): Promise<IClientModel> {
+    }: Omit<IClientModel, "id">): Promise<Omit<IClientModel, "idAdmin">> {
         const db = getDatabaseConnection();
 
         const [result] = await db.execute<ResultSetHeader>(
@@ -41,7 +53,7 @@ const ClientModel = {
             [name, sex, phone, address, birth, idAdmin],
         );
 
-        const data = { id: result.insertId, name, sex, phone, address, birth, idAdmin };
+        const data = { id: result.insertId, name, sex, phone, address, birth };
 
         await redisClient.del(`clients:user:${idAdmin}`);
 

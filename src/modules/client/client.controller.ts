@@ -23,14 +23,16 @@ export const getClients = asyncHandler(
             return next(createError(error));
         }
 
-        const clients = await ClientModel.getClients(req.user.id);
+        const { offset } = req.query;
 
-        if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(clients), { EX: 300 });
+        const data = await ClientModel.getClients(req.user.id, offset as string);
+
+        if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(data), { EX: 300 });
 
         const responseData = {
             status: 200,
             message: "Clientes listados com sucesso.",
-            data: clients,
+            data,
         };
 
         successHandler(res, responseData);
@@ -153,7 +155,7 @@ export const deleteClient = asyncHandler(
             throw new Error("Usuário não autorizado!");
         }
 
-        const deletedClient = await ClientModel.deleteClient(Number(req.params.id), req.user.id);
+        await ClientModel.deleteClient(Number(req.params.id), req.user.id);
 
         res.status(200);
         res.json({
@@ -161,7 +163,6 @@ export const deleteClient = asyncHandler(
             message: "Cliente deletado com sucesso",
             data: {
                 id: req.params.id,
-                affectedRows: deletedClient.affectedRows,
             },
         });
     },
