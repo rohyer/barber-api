@@ -1,23 +1,24 @@
 import getDatabaseConnection from "../../shared/config/db.js";
 import redisClient from "../../shared/config/redis-client.js";
-import { IClienteModelResponse, IClientModel } from "./client.types.js";
-import { QueryResult, ResultSetHeader, RowDataPacket } from "mysql2";
+import { IClientModelResponse, IClientModel } from "./client.types.js";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 const ClientModel = {
     async getClients(
         idAdmin: IClientModel["idAdmin"],
         offset: string,
-    ): Promise<IClienteModelResponse | null> {
+        query: string,
+    ): Promise<IClientModelResponse | null> {
         const db = getDatabaseConnection();
 
         const [result] = await db.execute<(IClientModel & RowDataPacket)[]>(
-            "SELECT id, name, sex, phone, address, birth FROM client WHERE id_admin = ? ORDER BY id DESC LIMIT 10 OFFSET ?",
-            [idAdmin, offset],
+            "SELECT id, name, sex, phone, address, birth FROM client WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT 10 OFFSET ?",
+            [idAdmin, query, query, offset],
         );
 
         const [rows] = await db.execute<RowDataPacket[]>(
-            "SELECT COUNT(*) AS total FROM client WHERE id_admin = ?",
-            [idAdmin],
+            "SELECT COUNT(*) AS total FROM client WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%'))",
+            [idAdmin, query, query],
         );
 
         const total = rows[0].total as number;
@@ -25,6 +26,23 @@ const ClientModel = {
         return {
             clients: result,
             total,
+        };
+    },
+
+    async getClientsByName(
+        idAdmin: IClientModel["idAdmin"],
+        offset: string,
+        query: string,
+    ): Promise<{ clients: IClientModel["name"][] } | null> {
+        const db = getDatabaseConnection();
+
+        const [result] = await db.execute<(IClientModel["name"] & RowDataPacket)[]>(
+            "SELECT name FROM client WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT 10 OFFSET ?",
+            [idAdmin, query, query, offset],
+        );
+
+        return {
+            clients: result,
         };
     },
 

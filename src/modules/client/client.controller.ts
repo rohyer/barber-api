@@ -23,9 +23,46 @@ export const getClients = asyncHandler(
             return next(createError(error));
         }
 
-        const { offset } = req.query;
+        const { offset, query } = req.query;
 
-        const data = await ClientModel.getClients(req.user.id, offset as string);
+        const data = await ClientModel.getClients(req.user.id, offset as string, query as string);
+
+        if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(data), { EX: 300 });
+
+        const responseData = {
+            status: 200,
+            message: "Clientes listados com sucesso.",
+            data,
+        };
+
+        successHandler(res, responseData);
+    },
+);
+
+/**
+ * @description Get all clients
+ * @route       GET /api/clients/options
+ * @access      Private
+ */
+export const getClientsByName = asyncHandler(
+    async (req: AuthenticatedRequest, res: ExpressResponse, next: NextFunction) => {
+        if (!req.user) {
+            const error = {
+                name: "UserNotAuthenticated",
+                message: "Usuário não autenticado.",
+                status: 401,
+            };
+
+            return next(createError(error));
+        }
+
+        const { offset, query } = req.query;
+
+        const data = await ClientModel.getClientsByName(
+            req.user.id,
+            offset as string,
+            query as string,
+        );
 
         if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(data), { EX: 300 });
 
