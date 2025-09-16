@@ -10,7 +10,7 @@ export interface IClientModel {
     idAdmin: number;
 }
 
-export interface IClienteModelResponse {
+export interface IClientModelResponse {
     clients: (IClientModel & RowDataPacket)[];
-    total: string;
+    total: number;
 }
