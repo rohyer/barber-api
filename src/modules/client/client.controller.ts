@@ -20,7 +20,7 @@ export const getClients = asyncHandler(
                 status: 401,
             };
 
-            return next(createError(error));
+            throw createError(error);
         }
 
         const { offset, query } = req.query;
@@ -45,7 +45,7 @@ export const getClients = asyncHandler(
  * @access      Private
  */
 export const getClientsByName = asyncHandler(
-    async (req: AuthenticatedRequest, res: ExpressResponse, next: NextFunction) => {
+    async (req: AuthenticatedRequest, res: ExpressResponse, _next: NextFunction) => {
         if (!req.user) {
             const error = {
                 name: "UserNotAuthenticated",
@@ -53,7 +53,7 @@ export const getClientsByName = asyncHandler(
                 status: 401,
             };
 
-            return next(createError(error));
+            throw createError(error);
         }
 
         const { offset, query } = req.query;
@@ -91,8 +91,13 @@ export const registerClient = asyncHandler(
         const { name, sex, phone, address, birth } = req.body;
 
         if (!name || !sex || !phone || !address || !birth) {
-            res.status(400);
-            throw new Error("Por favor, preencha os campos!");
+            const error = {
+                name: "UnfilledFields",
+                message: "Por favor, preencha os campos.",
+                status: 400,
+            };
+
+            throw createError(error);
         }
 
         const clientData = {
@@ -106,12 +111,13 @@ export const registerClient = asyncHandler(
 
         const result = await ClientModel.createClient(clientData);
 
-        res.status(201);
-        res.json({
-            success: true,
-            message: "Cliente cadastrado com sucesso!",
+        const responseData = {
+            status: 201,
+            message: "Cliente cadastrado com sucesso.",
             data: { ...result },
-        });
+        };
+
+        successHandler(res, responseData);
     },
 );
 
@@ -194,13 +200,14 @@ export const deleteClient = asyncHandler(
 
         await ClientModel.deleteClient(Number(req.params.id), req.user.id);
 
-        res.status(200);
-        res.json({
-            success: true,
+        const responseData = {
+            status: 200,
             message: "Cliente deletado com sucesso",
             data: {
                 id: req.params.id,
             },
-        });
+        };
+
+        successHandler(res, responseData);
     },
 );
