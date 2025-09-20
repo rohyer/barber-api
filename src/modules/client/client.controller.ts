@@ -12,7 +12,7 @@ import { successHandler } from "../../shared/utils/successHandler.js";
  * @access      Private
  */
 export const getClients = asyncHandler(
-    async (req: AuthenticatedRequest, res: ExpressResponse, next: NextFunction) => {
+    async (req: AuthenticatedRequest, res: ExpressResponse, _next: NextFunction) => {
         if (!req.user) {
             const error = {
                 name: "UserNotAuthenticated",
