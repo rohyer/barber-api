@@ -8,6 +8,8 @@ export const errorHandler = (
     res: ExpressResponse,
     _next: NextFunction,
 ) => {
+    if (res.headersSent) return;
+
     const status = error.status || 500;
 
     res.status(status).json({
