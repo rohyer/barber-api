@@ -32,6 +32,7 @@ export const getClients = asyncHandler(
         const responseData = {
             status: 200,
             message: "Clientes listados com sucesso.",
+            fromCache: false,
             data,
         };
 
@@ -69,6 +70,7 @@ export const getClientsByName = asyncHandler(
         const responseData = {
             status: 200,
             message: "Clientes listados com sucesso.",
+            fromCache: false,
             data,
         };
 
@@ -111,9 +113,14 @@ export const registerClient = asyncHandler(
 
         const result = await ClientModel.createClient(clientData);
 
+        const cacheKeys = await redisClient.keys(`client:user:${req.user.id}:*`);
+
+        if (cacheKeys.length > 0) await redisClient.del(cacheKeys);
+
         const responseData = {
             status: 201,
             message: "Cliente cadastrado com sucesso.",
+            fromCache: false,
             data: { ...result },
         };
 
@@ -167,6 +174,7 @@ export const updateClient = asyncHandler(
         const responseData = {
             status: 200,
             message: "Cliente atualizado com sucesso.",
+            fromCache: false,
             data: clientData,
         };
 
@@ -203,6 +211,7 @@ export const deleteClient = asyncHandler(
         const responseData = {
             status: 200,
             message: "Cliente deletado com sucesso",
+            fromCache: false,
             data: {
                 id: req.params.id,
             },
