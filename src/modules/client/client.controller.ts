@@ -171,6 +171,10 @@ export const updateClient = asyncHandler(
 
         await ClientModel.updateClient(clientData);
 
+        const cacheKeys = await redisClient.keys(`client:user:${req.user.id}:*`);
+
+        if (cacheKeys.length > 0) await redisClient.del(cacheKeys);
+
         const responseData = {
             status: 200,
             message: "Cliente atualizado com sucesso.",
@@ -207,6 +211,10 @@ export const deleteClient = asyncHandler(
         }
 
         await ClientModel.deleteClient(Number(req.params.id), req.user.id);
+
+        const cacheKeys = await redisClient.keys(`client:user:${req.user.id}:*`);
+
+        if (cacheKeys.length > 0) await redisClient.del(cacheKeys);
 
         const responseData = {
             status: 200,
