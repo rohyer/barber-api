@@ -5,6 +5,8 @@ import { AuthenticatedRequest } from "../../shared/types/express.type.js";
 import { Response as ExpressResponse, NextFunction } from "express";
 import { createError } from "../../shared/utils/createError.js";
 import { successHandler } from "../../shared/utils/successHandler.js";
+import { ParamsDictionary } from "express-serve-static-core";
+import { GetClientsQuery } from "./client.types.js";
 
 /**
  * @description Get all clients
@@ -12,7 +14,11 @@ import { successHandler } from "../../shared/utils/successHandler.js";
  * @access      Private
  */
 export const getClients = asyncHandler(
-    async (req: AuthenticatedRequest, res: ExpressResponse, _next: NextFunction) => {
+    async (
+        req: AuthenticatedRequest<ParamsDictionary, any, any, GetClientsQuery>,
+        res: ExpressResponse,
+        _next: NextFunction,
+    ) => {
         if (!req.user) {
             const error = {
                 name: "UserNotAuthenticated",
@@ -23,9 +29,11 @@ export const getClients = asyncHandler(
             throw createError(error);
         }
 
-        const { offset, query } = req.query;
+        const { page, query } = req.query;
 
-        const data = await ClientModel.getClients(req.user.id, offset as string, query as string);
+        const offset = (page - 1) * 10;
+
+        const data = await ClientModel.getClients(req.user.id, offset, query);
 
         if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(data), { EX: 300 });
 
@@ -46,7 +54,11 @@ export const getClients = asyncHandler(
  * @access      Private
  */
 export const getClientsByName = asyncHandler(
-    async (req: AuthenticatedRequest, res: ExpressResponse, _next: NextFunction) => {
+    async (
+        req: AuthenticatedRequest<ParamsDictionary, any, any, GetClientsQuery>,
+        res: ExpressResponse,
+        _next: NextFunction,
+    ) => {
         if (!req.user) {
             const error = {
                 name: "UserNotAuthenticated",
@@ -57,13 +69,11 @@ export const getClientsByName = asyncHandler(
             throw createError(error);
         }
 
-        const { offset, query } = req.query;
+        const { page, query } = req.query;
 
-        const data = await ClientModel.getClientsByName(
-            req.user.id,
-            offset as string,
-            query as string,
-        );
+        const offset = (page - 1) * 10;
+
+        const data = await ClientModel.getClientsByName(req.user.id, offset, query);
 
         if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(data), { EX: 300 });
 

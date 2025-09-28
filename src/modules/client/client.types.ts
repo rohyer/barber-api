@@ -14,3 +14,8 @@ export interface IClientModelResponse {
     clients: (IClientModel & RowDataPacket)[];
     total: number;
 }
+
+export type GetClientsQuery = {
+    page: number;
+    query: string;
+};

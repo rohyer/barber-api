@@ -6,7 +6,7 @@ import { ResultSetHeader, RowDataPacket } from "mysql2";
 const ClientModel = {
     async getClients(
         idAdmin: IClientModel["idAdmin"],
-        offset: string,
+        offset: number,
         query: string,
     ): Promise<IClientModelResponse | null> {
         const db = getDatabaseConnection();
@@ -31,7 +31,7 @@ const ClientModel = {
 
     async getClientsByName(
         idAdmin: IClientModel["idAdmin"],
-        offset: string,
+        offset: number,
         query: string,
     ): Promise<{ clients: IClientModel["name"][] } | null> {
         const db = getDatabaseConnection();
