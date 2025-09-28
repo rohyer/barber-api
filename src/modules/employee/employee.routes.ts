@@ -10,7 +10,7 @@ import {
 import { protect } from "../../shared/middleware/auth.js";
 import { cacheMiddleware } from "../../shared/middleware/cache.js";
 
-router.get("/", protect, cacheMiddleware, getEmployees);
+router.get("/", protect, cacheMiddleware("employee"), getEmployees);
 
 router.post("/", protect, setEmployee);
 
