@@ -10,7 +10,7 @@ export const cacheMiddleware = (prefix: string) => {
             throw new Error("Usuário não autenticado!");
         }
 
-        const offset = req.query.offset ?? 0;
+        const offset = req.query.page ?? 0;
         const query = req.query.query ?? "";
 
         const cacheKey = `${prefix}:user:${req.user.id}:offset:${offset}:query:${query}`;
