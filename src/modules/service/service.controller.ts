@@ -31,10 +31,15 @@ export const getServices = asyncHandler(async (req: AuthenticatedRequest, res: E
  */
 // Precisar passar no protect? req.user.id?
 export const setService = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
-    const { name, value, idAdmin } = req.body;
+    if (!req.user) {
+        res.status(401);
+        throw new Error("Usuário não autenticado");
+    }
+
+    const { name, value } = req.body;
 
     // Verifica se os campos foram preenchidos
-    if (!name || !value || !idAdmin) {
+    if (!name || !value) {
         res.status(400);
         throw new Error("Por favor, preencha os campos corretamente");
     }
@@ -47,7 +52,7 @@ export const setService = asyncHandler(async (req: AuthenticatedRequest, res: Ex
         throw new Error("Serviço já existe");
     }
 
-    const serviceData = { name, value, idAdmin };
+    const serviceData = { name, value, idAdmin: req.user.id };
 
     // Faz o cadastro no Banco de Dados
     const result = await ServiceModel.createService(serviceData);
