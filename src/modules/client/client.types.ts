@@ -1,5 +1,9 @@
 import { RowDataPacket } from "mysql2";
 
+export interface IClientCustomerService {
+    lastCustomerServiceDate: string | null;
+}
+
 export interface IClientModel {
     id: number;
     name: string;
@@ -11,7 +15,7 @@ export interface IClientModel {
 }
 
 export interface IClientModelResponse {
-    clients: (IClientModel & RowDataPacket)[];
+    clients: (IClientModel & IClientCustomerService & RowDataPacket)[];
     total: number;
 }
 

@@ -1,6 +1,6 @@
 import getDatabaseConnection from "../../shared/config/db.js";
 import redisClient from "../../shared/config/redis-client.js";
-import { IClientModelResponse, IClientModel } from "./client.types.js";
+import { IClientModelResponse, IClientModel, IClientCustomerService } from "./client.types.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 const ClientModel = {
@@ -11,8 +11,10 @@ const ClientModel = {
     ): Promise<IClientModelResponse | null> {
         const db = getDatabaseConnection();
 
-        const [result] = await db.execute<(IClientModel & RowDataPacket)[]>(
-            "SELECT id, name, sex, phone, address, birth FROM client WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT 10 OFFSET ?",
+        const [result] = await db.execute<
+            (IClientModel & IClientCustomerService & RowDataPacket)[]
+        >(
+            "SELECT c.id, c.name, c.sex, c.phone, c.address, c.birth, c.created_at AS createdAt, MAX(cs.date) AS lastCustomerServiceDate FROM client c LEFT JOIN customer_service cs ON c.id = cs.id_client WHERE c.id_admin = ? AND (? = '' OR c.name LIKE CONCAT('%', ?, '%')) GROUP BY c.id, c.name, c.sex, c.phone, c.address, c.birth ORDER BY c.id DESC LIMIT 10 OFFSET ?",
             [idAdmin, query, query, offset],
         );
 
@@ -22,6 +24,8 @@ const ClientModel = {
         );
 
         const total = rows[0].total as number;
+
+        console.log(result);
 
         return {
             clients: result,
