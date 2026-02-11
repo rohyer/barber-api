@@ -3,6 +3,7 @@ import EmployeeModel from "./employee.model.js";
 import redisClient from "../../shared/config/redis-client.js";
 import { AuthenticatedRequest } from "../../shared/types/express.type.js";
 import { Response as ExpressResponse } from "express";
+import { successHandler } from "../../shared/utils/successHandler.js";
 
 /**
  * @description Get all employees
@@ -16,15 +17,22 @@ export const getEmployees = asyncHandler(
             throw new Error("Usuário não autenticado!");
         }
 
-        const employees = await EmployeeModel.getEmployees(req.user.id);
+        const { page, query } = req.query;
 
-        if (req.cacheKey) {
-            await redisClient.set(req.cacheKey, JSON.stringify(employees), {
-                EX: 300,
-            });
-        }
+        const offset = (page - 1) * 10;
 
-        res.status(200).json(employees);
+        const data = await EmployeeModel.getEmployees(req.user.id, offset, query);
+
+        if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(data), { EX: 300 });
+
+        const responseData = {
+            status: 200,
+            message: "Colaboradores listados com sucesso.",
+            fromCache: false,
+            data,
+        };
+
+        successHandler(res, responseData);
     },
 );
 
