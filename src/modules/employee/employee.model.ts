@@ -25,17 +25,18 @@ const EmployeeModel = {
         };
     },
 
-    async getEmployeeById(id: IEmployee["id"]) {
+    async getEmployeeById(id: IEmployee["id"]): Promise<(IEmployee & RowDataPacket)[] | null> {
         const db = getDatabaseConnection();
 
         const [result] = await db.execute<(IEmployee & RowDataPacket)[]>(
-            "SELECT id, name, address, sex, phone, birth, id_admin FROM employee WHERE id = ? LIMIT 1",
+            "SELECT id, name, address, sex, phone, birth, id_admin AS idAdmin FROM employee WHERE id = ? LIMIT 1",
             [id],
         );
+
         return result;
     },
 
-    async setEmployee({ name, address, sex, phone, birth, idAdmin }: Omit<IEmployee, "id">) {
+    async createEmployee({ name, address, sex, phone, birth, idAdmin }: Omit<IEmployee, "id">) {
         const db = getDatabaseConnection();
 
         const [result] = await db.execute<ResultSetHeader>(

@@ -187,7 +187,7 @@ export const updateClient = asyncHandler(
 
         const responseData = {
             status: 200,
-            message: "Cliente atualizado com sucesso.",
+            message: "Cliente editado com sucesso.",
             fromCache: false,
             data: clientData,
         };

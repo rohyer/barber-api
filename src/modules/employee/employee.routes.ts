@@ -3,7 +3,7 @@ import express from "express";
 const router = express.Router();
 import {
     getEmployees,
-    setEmployee,
+    registerEmployee,
     updateEmployee,
     deleteEmployee,
 } from "./employee.controller.js";
@@ -12,7 +12,7 @@ import { cacheMiddleware } from "../../shared/middleware/cache.js";
 
 router.get("/", protect, cacheMiddleware("employee"), getEmployees);
 
-router.post("/", protect, setEmployee);
+router.post("/", protect, registerEmployee);
 
 router.put("/:id", protect, updateEmployee);
 
