@@ -5,5 +5,5 @@ export interface IEmployee {
     sex: "M" | "F" | "Outro";
     phone: string;
     birth: string;
-    idAdmin: number | null;
+    idAdmin: number;
 }
