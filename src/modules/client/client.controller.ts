@@ -1,131 +1,23 @@
 import asyncHandler from "express-async-handler";
-import ClientModel from "./client.model.js";
-import redisClient from "../../shared/config/redis-client.js";
 import { AuthenticatedRequest } from "../../shared/types/express.type.js";
 import { Response as ExpressResponse, NextFunction } from "express";
-import { createError } from "../../shared/utils/createError.js";
 import { successHandler } from "../../shared/utils/successHandler.js";
 import { ParamsDictionary } from "express-serve-static-core";
-import { GetClientsQuery } from "./client.types.js";
+import { CreateClientSchema, DeleteClientSchema, GetClientsDTO, GetClientsSchema, UpdateClientSchema } from "./client.dto.js";
+import { ClientService } from "./service/client.service.js";
 
-/**
- * @description Get all clients
- * @route       GET /api/clients
- * @access      Private
- */
-export const getClients = asyncHandler(
-    async (
-        req: AuthenticatedRequest<ParamsDictionary, any, any, GetClientsQuery>,
-        res: ExpressResponse,
-        _next: NextFunction,
-    ) => {
-        if (!req.user) {
-            const error = {
-                name: "UserNotAuthenticated",
-                message: "Usuário não autenticado.",
-                status: 401,
-            };
+export class ClientController {
+    constructor(private clientService: ClientService) {}
 
-            throw createError(error);
-        }
+    createClient = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
+        const schemaValidation = CreateClientSchema.safeParse(req.body);
 
-        const { page, query } = req.query;
+        if (!schemaValidation.success) 
+            throw new Error(schemaValidation.error.message);
 
-        const offset = (page - 1) * 10;
+        const idAdmin = req.user!.id;
 
-        const data = await ClientModel.getClients(req.user.id, offset, query);
-
-        if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(data), { EX: 300 });
-
-        const responseData = {
-            status: 200,
-            message: "Clientes listados com sucesso.",
-            fromCache: false,
-            data,
-        };
-
-        successHandler(res, responseData);
-    },
-);
-
-/**
- * @description Get all clients
- * @route       GET /api/clients/options
- * @access      Private
- */
-export const getClientsByName = asyncHandler(
-    async (
-        req: AuthenticatedRequest<ParamsDictionary, any, any, GetClientsQuery>,
-        res: ExpressResponse,
-        _next: NextFunction,
-    ) => {
-        if (!req.user) {
-            const error = {
-                name: "UserNotAuthenticated",
-                message: "Usuário não autenticado.",
-                status: 401,
-            };
-
-            throw createError(error);
-        }
-
-        const { page, query } = req.query;
-
-        const offset = (page - 1) * 10;
-
-        const data = await ClientModel.getClientsByName(req.user.id, offset, query);
-
-        if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(data), { EX: 300 });
-
-        const responseData = {
-            status: 200,
-            message: "Clientes listados com sucesso.",
-            fromCache: false,
-            data,
-        };
-
-        successHandler(res, responseData);
-    },
-);
-
-/**
- * @description Register client
- * @route       POST /api/clients
- * @access      Private
- */
-export const registerClient = asyncHandler(
-    async (req: AuthenticatedRequest, res: ExpressResponse) => {
-        if (!req.user) {
-            res.status(401);
-            throw new Error("Usuário não autenticado!");
-        }
-
-        const { name, sex, phone, address, birth } = req.body;
-
-        if (!name || !sex || !phone || !address || !birth) {
-            const error = {
-                name: "UnfilledFields",
-                message: "Por favor, preencha os campos.",
-                status: 400,
-            };
-
-            throw createError(error);
-        }
-
-        const clientData = {
-            name,
-            sex,
-            phone,
-            address,
-            birth,
-            idAdmin: req.user.id,
-        };
-
-        const result = await ClientModel.createClient(clientData);
-
-        const cacheKeys = await redisClient.keys(`client:user:${req.user.id}:*`);
-
-        if (cacheKeys.length > 0) await redisClient.del(cacheKeys);
+        const result = await this.clientService.createClient({ ...schemaValidation.data, idAdmin });
 
         const responseData = {
             status: 201,
@@ -135,96 +27,109 @@ export const registerClient = asyncHandler(
         };
 
         successHandler(res, responseData);
-    },
-);
+    });
 
-/**
- * @description Update client
- * @route       PUT /api/clients/:id
- * @access      Private
- */
-export const updateClient = asyncHandler(
-    async (req: AuthenticatedRequest, res: ExpressResponse) => {
-        const { name, sex, phone, address, birth } = req.body;
+    getClients = asyncHandler(async (
+        req: AuthenticatedRequest<ParamsDictionary, any, any, GetClientsDTO>,
+        res: ExpressResponse,
+        _next: NextFunction,
+    ) => {
+        const schemaValidation = GetClientsSchema.safeParse(req.query);
 
-        if (!name || !sex || !phone || !address || !birth) {
-            res.status(400);
-            throw new Error("Por favor, preencha todos os campos!");
-        }
+        if (!schemaValidation.success) 
+            throw new Error(schemaValidation.error.message);
 
-        const clientExists = await ClientModel.getClientById(Number(req.params.id));
+        const idAdmin = req.user!.id;
 
-        if (!clientExists || clientExists.length === 0) {
-            res.status(400);
-            throw new Error("Cliente não encontrado!");
-        }
+        const data = await this.clientService.getClients({
+            ...schemaValidation.data,
+            idAdmin,
+            cacheKey: req.cacheKey,
+        });
 
-        if (!req.user) {
-            res.status(400);
-            throw new Error("Usuário não encontrado!");
-        }
-
-        if (clientExists[0].idAdmin !== Number(req.user.id)) {
-            res.status(400);
-            throw new Error("Usuário não autorizado!");
-        }
-
-        const clientData = {
-            id: Number(req.params.id),
-            name,
-            sex,
-            phone,
-            address,
-            birth,
-            idAdmin: req.user.id,
+        const responseData = {
+            status: 200,
+            message: "Clientes listados com sucesso.",
+            fromCache: false,
+            data,
         };
 
-        await ClientModel.updateClient(clientData);
+        return successHandler(res, responseData);
+    });
 
-        const cacheKeys = await redisClient.keys(`client:user:${req.user.id}:*`);
+    getClientsByName = asyncHandler(async (
+        req: AuthenticatedRequest<ParamsDictionary, any, any, GetClientsDTO>,
+        res: ExpressResponse,
+        _next: NextFunction,
+    ) => {
+        const schemaValidation = GetClientsSchema.safeParse(req.query);
 
-        if (cacheKeys.length > 0) await redisClient.del(cacheKeys);
+        if (!schemaValidation.success) 
+            throw new Error(schemaValidation.error.message);
+
+        const idAdmin = req.user!.id;
+
+        const data = await this.clientService.getClientsByName({
+            ...schemaValidation.data,
+            idAdmin,
+            cacheKey: req.cacheKey,
+        });
+
+        const responseData = {
+            status: 200,
+            message: "Clientes listados com sucesso.",
+            fromCache: false,
+            data,
+        };
+
+        return successHandler(res, responseData);
+    });
+
+    updateClient = asyncHandler(async (
+        req: AuthenticatedRequest,
+        res: ExpressResponse,
+        _next: NextFunction,
+    ) => {
+        const validateSchema = UpdateClientSchema.safeParse(req.body);
+
+        if (!validateSchema.success) 
+            throw new Error(validateSchema.error.message);
+
+        const clientData = {
+            ...validateSchema.data,
+            id: Number(req.params.id),
+            idAdmin: req.user!.id,
+        };
+
+        const data = await this.clientService.updateClient(clientData);
 
         const responseData = {
             status: 200,
             message: "Cliente editado com sucesso.",
             fromCache: false,
-            data: clientData,
+            data,
         };
 
-        successHandler(res, responseData);
-    },
-);
+        return successHandler(res, responseData);
+    });
 
-/**
- * @description Delete client
- * @route       DELETE /api/clients/:id
- * @access      Private
- */
-export const deleteClient = asyncHandler(
-    async (req: AuthenticatedRequest, res: ExpressResponse) => {
-        const clientExists = await ClientModel.getClientById(Number(req.params.id));
+    deleteClient = asyncHandler(async (
+        req: AuthenticatedRequest,
+        res: ExpressResponse,
+        _next: NextFunction,
+    ) => {
+        const validateSchema = DeleteClientSchema.safeParse(req.params.id);
 
-        if (!clientExists || clientExists.length === 0) {
-            res.status(400);
-            throw new Error("Cliente não encontrado!");
-        }
+        if (!validateSchema.success)
+            throw new Error(validateSchema.error.message);
 
-        if (!req.user) {
-            res.status(400);
-            throw new Error("Usuário não encontrado!");
-        }
+        const isDeletedClient = await this.clientService.deleteClient({
+            id: validateSchema.data,
+            idAdmin: req.user!.id,
+        });
 
-        if (clientExists[0].idAdmin !== Number(req.user.id)) {
-            res.status(400);
-            throw new Error("Usuário não autorizado!");
-        }
-
-        await ClientModel.deleteClient(Number(req.params.id), req.user.id);
-
-        const cacheKeys = await redisClient.keys(`client:user:${req.user.id}:*`);
-
-        if (cacheKeys.length > 0) await redisClient.del(cacheKeys);
+        if (!isDeletedClient)
+            throw new Error("Erro ao deletar cliente");
 
         const responseData = {
             status: 200,
@@ -235,6 +140,7 @@ export const deleteClient = asyncHandler(
             },
         };
 
-        successHandler(res, responseData);
-    },
-);
+        return successHandler(res, responseData);
+    });
+
+}

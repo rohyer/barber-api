@@ -1,23 +1,48 @@
 import express from "express";
 const router = express.Router();
-import {
-    getClients,
-    registerClient,
-    updateClient,
-    deleteClient,
-    getClientsByName,
-} from "./client.controller.js";
 import { protect } from "../../shared/middleware/auth.js";
 import { cacheMiddleware } from "../../shared/middleware/cache.js";
+import { ClientService } from "./service/client.service.js";
+import { ClientController } from "./client.controller.js";
+import { ClientRepository } from "./repository/client.repository.js";
+import getDatabaseConnection from "../../shared/config/db.js";
 
-router.get("/", protect, cacheMiddleware("client"), getClients);
+const db = getDatabaseConnection();
 
-router.get("/options", protect, cacheMiddleware("client"), getClientsByName);
+const clientRepository = new ClientRepository(db);
+const clientService = new ClientService(clientRepository);
+const clientController = new ClientController(clientService);
 
-router.post("/", protect, registerClient);
+router.get(
+    "/",
+    protect,
+    cacheMiddleware("client"),
+    (req, res, next) => clientController.getClients(req, res, next),
+);
 
-router.put("/:id", protect, updateClient);
+router.get(
+    "/options",
+    protect,
+    cacheMiddleware("client"),
+    (req, res, next) => clientController.getClientsByName(req, res, next),
+);
 
-router.delete("/:id", protect, deleteClient);
+router.post(
+    "/",
+    protect,
+    (req, res, next) => clientController.createClient(req, res, next),
+);
+
+router.put(
+    "/:id",
+    protect,
+    (req, res, next) => clientController.updateClient(req, res, next),
+);
+
+router.delete(
+    "/:id",
+    protect,
+    (req, res, next) => clientController.deleteClient(req, res, next),
+);
 
 export default router;
