@@ -341,9 +341,8 @@ export const confirmEmailChange = asyncHandler(async (req, res) => {
 });
 
 const generateToken = (id: IUser["id"]) => {
-    if (!process.env.JWT_SECRET) {
+    if (!process.env.JWT_SECRET) 
         throw new Error("Variável de ambiente não definida");
-    }
 
     return jwt.sign({ id }, process.env.JWT_SECRET);
 };

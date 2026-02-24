@@ -24,7 +24,8 @@ export const getEmployees = asyncHandler(
 
         const data = await EmployeeModel.getEmployees(req.user.id, offset, query);
 
-        if (req.cacheKey) await redisClient.set(req.cacheKey, JSON.stringify(data), { EX: 300 });
+        if (req.cacheKey) 
+            await redisClient.set(req.cacheKey, JSON.stringify(data), { EX: 300 });
 
         const responseData = {
             status: 200,
@@ -74,7 +75,8 @@ export const registerEmployee = asyncHandler(
 
         const cacheKeys = await redisClient.keys(`employee:user:${req.user.id}:*`);
 
-        if (cacheKeys.length > 0) await redisClient.del(cacheKeys);
+        if (cacheKeys.length > 0) 
+            await redisClient.del(cacheKeys);
 
         const responseData = {
             status: 201,
@@ -132,7 +134,8 @@ export const updateEmployee = asyncHandler(
 
         const cacheKeys = await redisClient.keys(`employee:user:${req.user.id}:*`);
 
-        if (cacheKeys.length > 0) await redisClient.del(cacheKeys);
+        if (cacheKeys.length > 0) 
+            await redisClient.del(cacheKeys);
 
         const responseData = {
             status: 200,
@@ -173,7 +176,8 @@ export const deleteEmployee = asyncHandler(
 
         const cacheKeys = await redisClient.keys(`employee:user:${req.user.id}:*`);
 
-        if (cacheKeys.length > 0) await redisClient.del(cacheKeys);
+        if (cacheKeys.length > 0) 
+            await redisClient.del(cacheKeys);
 
         const responseData = {
             status: 200,

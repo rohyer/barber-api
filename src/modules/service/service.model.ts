@@ -61,9 +61,7 @@ const ServiceModel = {
     async deleteService(id: IService["id"], idAdmin: IService["idAdmin"]) {
         const db = getDatabaseConnection();
 
-        const [result] = await db.execute<ResultSetHeader>("DELETE FROM service WHERE id = ?", [
-            id,
-        ]);
+        const [result] = await db.execute<ResultSetHeader>("DELETE FROM service WHERE id = ?", [id]);
 
         await redisClient.del(`services:user:${idAdmin}`);
         return result;

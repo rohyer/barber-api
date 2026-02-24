@@ -5,9 +5,8 @@ import { getAllStatistics } from "./statistics.model.js";
 
 export const getAllStatisticsController = asyncHandler(
     async (req: AuthenticatedRequest, res: ExpressResponse) => {
-        if (!req.user) {
+        if (!req.user) 
             throw new Error("Usuário não autenticado");
-        }
 
         const { month, year } = req.body;
 

@@ -63,9 +63,7 @@ const EmployeeModel = {
     async deleteEmployee(id: IEmployee["id"], idAdmin: IEmployee["idAdmin"]) {
         const db = getDatabaseConnection();
 
-        const [result] = await db.execute<ResultSetHeader>("DELETE FROM employee WHERE id = ?", [
-            id,
-        ]);
+        const [result] = await db.execute<ResultSetHeader>("DELETE FROM employee WHERE id = ?", [id]);
 
         await redisClient.del(`employees:user:${idAdmin}`);
         return result;

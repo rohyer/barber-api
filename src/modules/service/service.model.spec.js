@@ -71,9 +71,7 @@ describe("ServiceModel", () => {
 
             const result = await ServiceModel.getServices(idAdmin);
 
-            expect(mockExecute).toHaveBeenCalledWith("SELECT * FROM service WHERE id_admin = ?", [
-                idAdmin,
-            ]);
+            expect(mockExecute).toHaveBeenCalledWith("SELECT * FROM service WHERE id_admin = ?", [idAdmin]);
             expect(result).toEqual([
                 {
                     id: 1,

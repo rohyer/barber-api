@@ -35,9 +35,7 @@ describe("EmployeeModel", () => {
 
             const result = await EmployeeModel.getEmployees(idAdmin);
 
-            expect(mockExecute).toHaveBeenCalledWith("SELECT * FROM employee WHERE id_admin = ?", [
-                idAdmin,
-            ]);
+            expect(mockExecute).toHaveBeenCalledWith("SELECT * FROM employee WHERE id_admin = ?", [idAdmin]);
             expect(result).toEqual([
                 {
                     id: 1,

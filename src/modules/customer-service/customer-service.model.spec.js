@@ -237,9 +237,7 @@ describe("CustomerServicModel", () => {
 
             const result = await CustomerServiceModel.deleteCustomerService(id);
 
-            expect(mockExecute).toHaveBeenCalledWith("DELETE FROM customer_service WHERE id = ?", [
-                id,
-            ]);
+            expect(mockExecute).toHaveBeenCalledWith("DELETE FROM customer_service WHERE id = ?", [id]);
             expect(result).toEqual({
                 fieldCount: 0,
                 affectedRows: 1,

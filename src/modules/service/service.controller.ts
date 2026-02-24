@@ -17,9 +17,8 @@ export const getServices = asyncHandler(async (req: AuthenticatedRequest, res: E
 
     const result = await ServiceModel.getServices(req.user.id);
 
-    if (req.cacheKey) {
+    if (req.cacheKey) 
         await redisClient.set(req.cacheKey, JSON.stringify(result), { EX: 300 });
-    }
 
     res.status(200).json(result);
 });
