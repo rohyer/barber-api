@@ -14,7 +14,6 @@ export type UpdateClientService = UpdateClientDTO & {
     idAdmin: number;
 };
 
-export type DeleteClientService = {
-    id: DeleteClientDTO;
+export type DeleteClientService = DeleteClientDTO & {
     idAdmin: number;
 };
