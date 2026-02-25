@@ -11,7 +11,8 @@ export const protect = asyncHandler(async (req: AuthenticatedRequest, res, next)
         try {
             token = req.headers.authorization.split(" ")[1];
 
-            if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET não definido!");
+            if (!process.env.JWT_SECRET) 
+                throw new Error("JWT_SECRET não definido!");
 
             const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
 
@@ -28,7 +29,7 @@ export const protect = asyncHandler(async (req: AuthenticatedRequest, res, next)
         } catch (error) {
             throw new Error("Não autorizado", { cause: error });
         }
-    } else {
+    } else 
         throw new Error("Sem autorização");
-    }
+    
 });

@@ -18,21 +18,21 @@ export const cacheMiddleware = (prefix: string) => {
         try {
             const cachedData = await redisClient.get(cacheKey);
 
-            req.cacheKey = cacheKey;
+            req.cacheKey = cacheKey;            
 
             if (cachedData) {
-                successHandler(res, {
+                return successHandler(res, {
                     status: 200,
-                    message: "Requisição feita com sucesso CACHE",
+                    message: "Requisição feita com sucesso",
                     fromCache: true,
                     data: JSON.parse(cachedData),
                 });
             }
 
-            next();
+            return next();
         } catch (error) {
             console.error(`Erro ao verificar o cache ${prefix}`, error);
-            next();
+            return next();
         }
     };
 };
