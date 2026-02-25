@@ -15,7 +15,9 @@ export const GetClientsSchema = z.object({
     query: z.string().optional().default(""),
 });
 
-export const DeleteClientSchema = z.coerce.number();
+export const ParamsSchema = z.object({
+    id: z.string().regex(/^\d+$/, "ID deve ser numérico"),
+});
 
 export type CreateClientDTO = z.infer<typeof CreateClientSchema>;
 
@@ -23,4 +25,4 @@ export type UpdateClientDTO = z.infer<typeof UpdateClientSchema>;
 
 export type GetClientsDTO = z.infer<typeof GetClientsSchema>;
 
-export type DeleteClientDTO = z.infer<typeof DeleteClientSchema>;
+export type DeleteClientDTO = z.infer<typeof ParamsSchema>;
