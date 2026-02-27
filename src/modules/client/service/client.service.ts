@@ -97,7 +97,7 @@ export class ClientService {
     };
 
     deleteClient = async (data: DeleteClientService) => {
-        const client = await this.clientRepository.getClientById(data.id);
+        const client = await this.clientRepository.getClientById(Number(data.id));
 
         if (!client || !client.data.id)
             throw new Error("Cliente não encontrado!");
