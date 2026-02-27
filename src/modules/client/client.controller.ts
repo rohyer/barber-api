@@ -3,21 +3,17 @@ import { AuthenticatedRequest } from "../../shared/types/express.type.js";
 import { Response as ExpressResponse, NextFunction } from "express";
 import { successHandler } from "../../shared/utils/successHandler.js";
 import { ParamsDictionary } from "express-serve-static-core";
-import { CreateClientSchema, DeleteClientSchema, GetClientsDTO, GetClientsSchema, UpdateClientSchema } from "./client.dto.js";
+import { GetClientsDTO } from "./client.dto.js";
 import { ClientService } from "./service/client.service.js";
 
 export class ClientController {
     constructor(private clientService: ClientService) {}
 
     createClient = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
-        const schemaValidation = CreateClientSchema.safeParse(req.body);
-
-        if (!schemaValidation.success) 
-            throw new Error(schemaValidation.error.message);
-
-        const idAdmin = req.user!.id;
-
-        const result = await this.clientService.createClient({ ...schemaValidation.data, idAdmin });
+        const result = await this.clientService.createClient({
+            ...req.body,
+            idAdmin: req.user!.id,
+        });
 
         const responseData = {
             status: 201,
@@ -34,15 +30,10 @@ export class ClientController {
         res: ExpressResponse,
         _next: NextFunction,
     ) => {
-        const schemaValidation = GetClientsSchema.safeParse(req.query);
-
-        if (!schemaValidation.success) 
-            throw new Error(schemaValidation.error.message);
-
         const idAdmin = req.user!.id;
 
         const data = await this.clientService.getClients({
-            ...schemaValidation.data,
+            ...req.query,
             idAdmin,
             cacheKey: req.cacheKey,
         });
@@ -62,16 +53,9 @@ export class ClientController {
         res: ExpressResponse,
         _next: NextFunction,
     ) => {
-        const schemaValidation = GetClientsSchema.safeParse(req.query);
-
-        if (!schemaValidation.success) 
-            throw new Error(schemaValidation.error.message);
-
-        const idAdmin = req.user!.id;
-
         const data = await this.clientService.getClientsByName({
-            ...schemaValidation.data,
-            idAdmin,
+            ...req.query,
+            idAdmin: req.user!.id,
             cacheKey: req.cacheKey,
         });
 
@@ -90,18 +74,11 @@ export class ClientController {
         res: ExpressResponse,
         _next: NextFunction,
     ) => {
-        const validateSchema = UpdateClientSchema.safeParse(req.body);
-
-        if (!validateSchema.success) 
-            throw new Error(validateSchema.error.message);
-
-        const clientData = {
-            ...validateSchema.data,
+        const data = await this.clientService.updateClient({
+            ...req.body,
             id: Number(req.params.id),
             idAdmin: req.user!.id,
-        };
-
-        const data = await this.clientService.updateClient(clientData);
+        });
 
         const responseData = {
             status: 200,
@@ -118,13 +95,8 @@ export class ClientController {
         res: ExpressResponse,
         _next: NextFunction,
     ) => {
-        const validateSchema = DeleteClientSchema.safeParse(req.params.id);
-
-        if (!validateSchema.success)
-            throw new Error(validateSchema.error.message);
-
         const isDeletedClient = await this.clientService.deleteClient({
-            id: validateSchema.data,
+            id: req.params.id,
             idAdmin: req.user!.id,
         });
 
@@ -142,5 +114,4 @@ export class ClientController {
 
         return successHandler(res, responseData);
     });
-
 }
