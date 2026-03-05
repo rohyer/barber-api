@@ -1,21 +1,33 @@
 import express from "express";
 
 const router = express.Router();
-import {
-    getEmployees,
-    registerEmployee,
-    updateEmployee,
-    deleteEmployee,
-} from "./employee.controller.js";
+import { EmployeeController } from "./employee.controller.js";
 import { protect } from "../../shared/middleware/auth.js";
 import { cacheMiddleware } from "../../shared/middleware/cache.js";
+import getDatabaseConnection from "../../shared/config/db.js";
+import { validateRequest } from "../../shared/middleware/validateRequest.js";
+import { GetEmployeeSchema } from "./employee.dto.js";
+import { EmployeeRepository } from "./repository/employee.repository.js";
+import { EmployeeService } from "./service/employee.service.js";
 
-router.get("/", protect, cacheMiddleware("employee"), getEmployees);
+const db = getDatabaseConnection();
 
-router.post("/", protect, registerEmployee);
+const employeeRepository = new EmployeeRepository(db);
+const employeeService = new EmployeeService(employeeRepository);
+const employeeController = new EmployeeController(employeeService);
 
-router.put("/:id", protect, updateEmployee);
+router.get(
+    "/",
+    protect,
+    validateRequest(GetEmployeeSchema, "query"),
+    cacheMiddleware("employee"),
+    (req, res, next) => employeeController.getEmployees(req, res, next),
+);
 
-router.delete("/:id", protect, deleteEmployee);
+router.post("/", protect, employeeController.registerEmployee);
+
+router.put("/:id", protect, employeeController.updateEmployee);
+
+router.delete("/:id", protect, employeeController.deleteEmployee);
 
 export default router;
