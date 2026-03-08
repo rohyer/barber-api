@@ -1,7 +1,7 @@
 import redisClient from "../../../shared/config/redis-client.js";
 import { EmployeeEntity } from "../employee.entity.js";
 import { EmployeeRepository } from "../repository/employee.repository.js";
-import { CreateEmployeeService, GetEmployeeService } from "./employee.service.type.js";
+import { CreateEmployeeService, GetEmployeeService, UpdateEmployeeService } from "./employee.service.type.js";
 
 export class EmployeeService {
     constructor(private employeeRepository: EmployeeRepository) {}
@@ -45,5 +45,35 @@ export class EmployeeService {
             await redisClient.del(cacheKeys);
 
         return queryResult;
+    };
+
+    updateEmployee = async(data: UpdateEmployeeService) => {
+        const employee = await this.employeeRepository.findEmployeeById(data.id);
+
+        if (!employee || !employee.data.id)
+            throw new Error("Colaborador não encontrado");
+
+        if (employee.data.idAdmin !== data.idAdmin)
+            throw new Error("Usuário não autorizado");
+
+        employee.update({
+            name: data.name,
+            sex: data.sex,
+            phone: data.phone,
+            address: data.address,
+            birth: data.birth,
+        });
+
+        const updatedEmployee = await this.employeeRepository.updateEmployee(employee);
+
+        if (!updatedEmployee)
+            return null;
+
+        const cacheKeys = await redisClient.keys(`client:user:${data.idAdmin}:*`);
+
+        if (cacheKeys.length > 0) 
+            await redisClient.del(cacheKeys);
+
+        return { data: updatedEmployee };
     };
 }

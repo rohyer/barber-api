@@ -28,7 +28,7 @@ export class EmployeeController {
             data,
         };
     
-        successHandler(res, responseData);
+        return successHandler(res, responseData);
     });
     
     /**
@@ -37,7 +37,7 @@ export class EmployeeController {
      * @access      Private
      */
     registerEmployee = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
-        const result = await this.employeeService.registerEmployee({
+        const registeredEmployee = await this.employeeService.registerEmployee({
             ...req.body,
             idAdmin: req.user!.id,
             cacheKey: req.cacheKey,
@@ -47,10 +47,10 @@ export class EmployeeController {
             status: 201,
             message: "Colaborador cadastrado com sucesso.",
             fromCache: false,
-            data: { ...result },
+            data: { ...registeredEmployee },
         };
     
-        successHandler(res, responseData);
+        return successHandler(res, responseData);
     });
     
     /**
@@ -58,59 +58,22 @@ export class EmployeeController {
      * @route PUT /api/employees/:id
      * @access Private
      */
-    updateEmployee = asyncHandler(
-        async (req: AuthenticatedRequest, res: ExpressResponse) => {
-            const { name, address, sex, phone, birth } = req.body;
+    updateEmployee = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
+        const updatedEmployee = await this.employeeService.updateEmployee({
+            ...req.body,
+            idAdmin: req.user!.id,
+            cacheKeys: req.cacheKey,
+        });
+
+        const responseData = {
+            status: 200,
+            message: "Colaborador editado com sucesso",
+            fromCache: false,
+            data: { ...updatedEmployee },
+        };
     
-            if (!name || !address || !sex || !phone || !birth) {
-                res.status(400);
-                throw new Error("Por favor preencha os campos");
-            }
-    
-            const employeeExists = await EmployeeModel.getEmployeeById(Number(req.params.id));
-    
-            if (!employeeExists || employeeExists.length === 0) {
-                res.status(400);
-                throw new Error("Colaborador não encontrado!");
-            }
-    
-            if (!req.user) {
-                res.status(400);
-                throw new Error("Usuário não encontrado!");
-            }
-    
-            if (employeeExists[0].idAdmin !== Number(req.user.id)) {
-                res.status(400);
-                throw new Error("Usuário não autorizado!");
-            }
-    
-            const employeeData = {
-                name,
-                address,
-                sex,
-                phone,
-                birth,
-                id: Number(req.params.id),
-                idAdmin: req.user.id,
-            };
-    
-            await EmployeeModel.updateEmployee(employeeData);
-    
-            const cacheKeys = await redisClient.keys(`employee:user:${req.user.id}:*`);
-    
-            if (cacheKeys.length > 0) 
-                await redisClient.del(cacheKeys);
-    
-            const responseData = {
-                status: 200,
-                message: "Colaborador editado com sucesso",
-                fromCache: false,
-                data: employeeData,
-            };
-    
-            successHandler(res, responseData);
-        },
-    );
+        return successHandler(res, responseData);
+    });
     
     /**
      * @description Delete Employee

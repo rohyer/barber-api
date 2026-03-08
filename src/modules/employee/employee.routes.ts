@@ -31,7 +31,12 @@ router.post(
     (req, res, next) => employeeController.registerEmployee(req, res, next),
 );
 
-router.put("/:id", protect, employeeController.updateEmployee);
+router.put(
+    "/:id",
+    protect,
+    validateRequest(CreateEmployeeSchema),
+    (req, res, next) => employeeController.updateEmployee(req, res, next),
+);
 
 router.delete("/:id", protect, employeeController.deleteEmployee);
 
