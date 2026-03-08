@@ -6,7 +6,7 @@ import { protect } from "../../shared/middleware/auth.js";
 import { cacheMiddleware } from "../../shared/middleware/cache.js";
 import getDatabaseConnection from "../../shared/config/db.js";
 import { validateRequest } from "../../shared/middleware/validateRequest.js";
-import { CreateEmployeeSchema, GetEmployeeSchema } from "./employee.dto.js";
+import { CreateEmployeeSchema, GetEmployeeSchema, ParamsSchema } from "./employee.dto.js";
 import { EmployeeRepository } from "./repository/employee.repository.js";
 import { EmployeeService } from "./service/employee.service.js";
 
@@ -35,6 +35,7 @@ router.put(
     "/:id",
     protect,
     validateRequest(CreateEmployeeSchema),
+    validateRequest(ParamsSchema, "params"),
     (req, res, next) => employeeController.updateEmployee(req, res, next),
 );
 

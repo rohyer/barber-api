@@ -61,8 +61,8 @@ export class EmployeeController {
     updateEmployee = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
         const updatedEmployee = await this.employeeService.updateEmployee({
             ...req.body,
+            id: Number(req.params.id),
             idAdmin: req.user!.id,
-            cacheKeys: req.cacheKey,
         });
 
         const responseData = {
