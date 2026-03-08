@@ -1,6 +1,16 @@
 import { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { ClientEntity, ClientEntityProps } from "../client.entity.js";
-import { GetClientsParams, GetClientsResponse } from "./client.repository.type.js";
+import { ClientEntity, ClientEntityProps } from "./client.entity.js";
+
+type GetClientsParams = {
+    idAdmin: number;
+    offset: number;
+    query: string;
+};
+
+type GetClientsResponse = {
+    clients: ClientEntity[];
+    total: number;
+};
 
 export class ClientRepository {
     constructor(private readonly db: Pool) {};

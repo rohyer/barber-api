@@ -1,7 +1,25 @@
-import redisClient from "../../../shared/config/redis-client.js";
-import { ClientEntity } from "../client.entity.js";
-import { ClientRepository } from "../repository/client.repository.js";
-import { CreateClientService, DeleteClientService, GetClientsService, UpdateClientService } from "./client.service.type.js";
+import redisClient from "../../shared/config/redis-client.js";
+import { ClientEntity } from "./client.entity.js";
+import { ClientRepository } from "./client.repository.js";
+import { CreateClientDTO, DeleteClientDTO, GetClientsDTO, UpdateClientDTO } from "./client.dto.js";
+
+type CreateClientService = CreateClientDTO & {
+    idAdmin: number;
+};
+
+type GetClientsService = GetClientsDTO & {
+    idAdmin: number;
+    cacheKey: string | undefined;
+};
+
+type UpdateClientService = UpdateClientDTO & {
+    id: number;
+    idAdmin: number;
+};
+
+type DeleteClientService = DeleteClientDTO & {
+    idAdmin: number;
+};
 
 export class ClientService {
     constructor(private clientRepository: ClientRepository) {}

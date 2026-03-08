@@ -4,7 +4,7 @@ import { Response as ExpressResponse, NextFunction } from "express";
 import { successHandler } from "../../shared/utils/successHandler.js";
 import { ParamsDictionary } from "express-serve-static-core";
 import { GetClientsDTO } from "./client.dto.js";
-import { ClientService } from "./service/client.service.js";
+import { ClientService } from "./client.service.js";
 
 export class ClientController {
     constructor(private clientService: ClientService) {}
