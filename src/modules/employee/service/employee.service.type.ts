@@ -1,4 +1,4 @@
-import { CreateEmployeeDTO, GetEmployeeDTO, UpdateEmployeeDTO } from "../employee.dto.js";
+import { CreateEmployeeDTO, DeleteEmployeeDTO, GetEmployeeDTO, UpdateEmployeeDTO } from "../employee.dto.js";
 
 export type GetEmployeeService = GetEmployeeDTO & {
     idAdmin: number;
@@ -13,4 +13,8 @@ export type CreateEmployeeService = CreateEmployeeDTO & {
 export type UpdateEmployeeService = UpdateEmployeeDTO & {
     idAdmin: number;
     id: number;
+};
+
+export type DeleteEmployeeService = DeleteEmployeeDTO & {
+    idAdmin: number;
 };
