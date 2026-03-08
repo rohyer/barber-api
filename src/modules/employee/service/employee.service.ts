@@ -1,7 +1,7 @@
 import redisClient from "../../../shared/config/redis-client.js";
 import { EmployeeEntity } from "../employee.entity.js";
 import { EmployeeRepository } from "../repository/employee.repository.js";
-import { CreateEmployeeService, GetEmployeeService, UpdateEmployeeService } from "./employee.service.type.js";
+import { CreateEmployeeService, DeleteEmployeeService, GetEmployeeService, UpdateEmployeeService } from "./employee.service.type.js";
 
 export class EmployeeService {
     constructor(private employeeRepository: EmployeeRepository) {}
@@ -75,5 +75,24 @@ export class EmployeeService {
             await redisClient.del(cacheKeys);
 
         return { data: updatedEmployee };
+    };
+
+    deleteEmployee = async(data: DeleteEmployeeService) => {
+        const employee = await this.employeeRepository.findEmployeeById(Number(data.id));
+
+        if (!employee || !employee.data.id)
+            throw new Error("Colaborador não encontrado");
+
+        if (employee.data.idAdmin !== data.idAdmin)
+            throw new Error("Usuário não autorizado");
+
+        const isDeletedClient = await this.employeeRepository.deleteEmployee(employee.data.id);
+
+        const cacheKeys = await redisClient.keys(`client:user:${data.idAdmin}:*`);
+
+        if (cacheKeys.length > 0)
+            await redisClient.del(cacheKeys);
+
+        return isDeletedClient;
     };
 }

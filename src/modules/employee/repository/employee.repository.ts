@@ -57,7 +57,7 @@ export class EmployeeRepository {
         const { name, sex, phone, address, birth, id } = employee.data;
 
         const [result] = await this.db.execute<ResultSetHeader>(
-            "UPDATE client SET name = ?, sex = ?, phone = ?, address = ?, birth = ? WHERE id = ?",
+            "UPDATE employee SET name = ?, sex = ?, phone = ?, address = ?, birth = ? WHERE id = ?",
             [name, sex, phone, address, birth, id],
         );
 
@@ -67,5 +67,13 @@ export class EmployeeRepository {
         const updatedEmployee = EmployeeEntity.createFromDatabase({ ...employee.data });
 
         return updatedEmployee;
+    };
+
+    deleteEmployee = async (id: EmployeeEntityProps["id"]): Promise<boolean> => {
+        const [result] = await this.db.execute<ResultSetHeader>("DELETE FROM employee WHERE id = ?", [id]);
+
+        const isDeleted = result.affectedRows > 0;
+
+        return isDeleted;
     };
 }

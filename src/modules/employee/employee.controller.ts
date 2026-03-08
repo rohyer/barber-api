@@ -1,6 +1,4 @@
 import asyncHandler from "express-async-handler";
-import EmployeeModel from "./employee.model.js";
-import redisClient from "../../shared/config/redis-client.js";
 import { AuthenticatedRequest } from "../../shared/types/express.type.js";
 import { Response as ExpressResponse } from "express";
 import { successHandler } from "../../shared/utils/successHandler.js";
@@ -80,42 +78,24 @@ export class EmployeeController {
      * @route delete /api/employees/:id
      * @access Private
      */
-    deleteEmployee = asyncHandler(
-        async (req: AuthenticatedRequest, res: ExpressResponse) => {
-            const employeeExists = await EmployeeModel.getEmployeeById(Number(req.params.id));
+    deleteEmployee = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
+        const isDeletedEmployee = await this.employeeService.deleteEmployee({
+            id: req.params.id,
+            idAdmin: req.user!.id,
+        });
+
+        if (!isDeletedEmployee)
+            throw new Error("Erro ao deletar colaborador");
+
+        const responseData = {
+            status: 200,
+            message: "Colaborador deletado com sucesso",
+            fromCache: false,
+            data: { 
+                id: req.params.id,
+            },
+        };
     
-            if (!employeeExists || employeeExists.length === 0) {
-                res.status(400);
-                throw new Error("Colaborador não encontrado!");
-            }
-    
-            if (!req.user) {
-                res.status(400);
-                throw new Error("Usuário encontrado");
-            }
-    
-            if (employeeExists[0].idAdmin !== Number(req.user.id)) {
-                res.status(400);
-                throw new Error("Usuário não autorizado!");
-            }
-    
-            await EmployeeModel.deleteEmployee(Number(req.params.id), req.user.id);
-    
-            const cacheKeys = await redisClient.keys(`employee:user:${req.user.id}:*`);
-    
-            if (cacheKeys.length > 0) 
-                await redisClient.del(cacheKeys);
-    
-            const responseData = {
-                status: 200,
-                message: "Colaborador deletado com sucesso",
-                fromCache: false,
-                data: {
-                    id: req.params.id,
-                },
-            };
-    
-            successHandler(res, responseData);
-        },
-    );
+        return successHandler(res, responseData);
+    });
 }
