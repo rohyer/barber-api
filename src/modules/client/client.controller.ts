@@ -30,11 +30,9 @@ export class ClientController {
         res: ExpressResponse,
         _next: NextFunction,
     ) => {
-        const idAdmin = req.user!.id;
-
         const data = await this.clientService.getClients({
             ...req.query,
-            idAdmin,
+            idAdmin: req.user!.id,
             cacheKey: req.cacheKey,
         });
 
