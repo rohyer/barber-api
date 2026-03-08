@@ -11,9 +11,12 @@ export const CreateEmployeeSchema = z.object({
     sex: z.enum(["M", "F", "Outro"]),
     phone: z.string().min(1, "Preencha o campo telefone"),
     birth: z.string().min(1, "Preencha o campo data de nascimento"),
-
 });
+
+export const UpdateEmployeeSchema = CreateEmployeeSchema;
 
 export type GetEmployeeDTO = z.infer<typeof GetEmployeeSchema>;
 
 export type CreateEmployeeDTO = z.infer<typeof CreateEmployeeSchema>;
+
+export type UpdateEmployeeDTO = z.infer<typeof UpdateEmployeeSchema>;
