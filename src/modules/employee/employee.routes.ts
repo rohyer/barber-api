@@ -39,6 +39,11 @@ router.put(
     (req, res, next) => employeeController.updateEmployee(req, res, next),
 );
 
-router.delete("/:id", protect, employeeController.deleteEmployee);
+router.delete(
+    "/:id",
+    protect,
+    validateRequest(ParamsSchema, "params"),
+    (req, res, next) => employeeController.deleteEmployee(req, res, next),
+);
 
 export default router;
