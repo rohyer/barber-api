@@ -1,4 +1,4 @@
-import { Pool, RowDataPacket } from "mysql2/promise";
+import { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { FindAllEmployeesParams, FindAllEmployeesResponse } from "./employee.repository.type.js";
 import { EmployeeEntity, EmployeeEntityProps } from "../employee.entity.js";
 
@@ -25,4 +25,17 @@ export class EmployeeRepository {
             total,
         };
     };
+
+    async createEmployee(employee: EmployeeEntity): Promise<EmployeeEntity | null> {
+        const { idAdmin, name, address, sex, phone, birth } = employee.data;
+
+        const [result] = await this.db.execute<ResultSetHeader>(
+            "INSERT INTO employee (name, address, sex, phone, birth, id_admin) VALUES (?, ?, ?, ?, ?, ?)",
+            [name, address, sex, phone, birth, idAdmin],
+        );
+
+        const createdEmployee = EmployeeEntity.createFromDatabase({ ...employee.data, id: result.insertId });
+
+        return createdEmployee;
+    }
 }

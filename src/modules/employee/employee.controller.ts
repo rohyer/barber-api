@@ -4,7 +4,6 @@ import redisClient from "../../shared/config/redis-client.js";
 import { AuthenticatedRequest } from "../../shared/types/express.type.js";
 import { Response as ExpressResponse } from "express";
 import { successHandler } from "../../shared/utils/successHandler.js";
-import { createError } from "../../shared/utils/createError.js";
 import { EmployeeService } from "./service/employee.service.js";
 
 export class EmployeeController {
@@ -16,11 +15,9 @@ export class EmployeeController {
      * @access      Private
      */
     getEmployees = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
-        const idAdmin = req.user!.id;
-
         const data = await this.employeeService.getEmployees({
             ...req.query,
-            idAdmin,
+            idAdmin: req.user!.id,
             cacheKey: req.cacheKey,
         });
     
@@ -39,51 +36,22 @@ export class EmployeeController {
      * @route       POST /api/employees
      * @access      Private
      */
-    registerEmployee = asyncHandler(
-        async (req: AuthenticatedRequest, res: ExpressResponse) => {
-            if (!req.user) {
-                res.status(401);
-                throw new Error("Usuário não autenticado!");
-            }
+    registerEmployee = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
+        const result = await this.employeeService.registerEmployee({
+            ...req.body,
+            idAdmin: req.user!.id,
+            cacheKey: req.cacheKey,
+        });
     
-            const { name, address, sex, phone, birth } = req.body;
+        const responseData = {
+            status: 201,
+            message: "Colaborador cadastrado com sucesso.",
+            fromCache: false,
+            data: { ...result },
+        };
     
-            if (!name || !address || !sex || !phone || !birth) {
-                const error = {
-                    name: "UnfilledFields",
-                    message: "Por favor, preencha os campos.",
-                    status: 400,
-                };
-    
-                throw createError(error);
-            }
-    
-            const employeeData = {
-                name,
-                address,
-                sex,
-                phone,
-                birth,
-                idAdmin: req.user.id,
-            };
-    
-            const result = await EmployeeModel.createEmployee(employeeData);
-    
-            const cacheKeys = await redisClient.keys(`employee:user:${req.user.id}:*`);
-    
-            if (cacheKeys.length > 0) 
-                await redisClient.del(cacheKeys);
-    
-            const responseData = {
-                status: 201,
-                message: "Colaborador cadastrado com sucesso.",
-                fromCache: false,
-                data: { ...result },
-            };
-    
-            successHandler(res, responseData);
-        },
-    );
+        successHandler(res, responseData);
+    });
     
     /**
      * @description Update Employee

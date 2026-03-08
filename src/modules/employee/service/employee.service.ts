@@ -1,6 +1,7 @@
 import redisClient from "../../../shared/config/redis-client.js";
+import { EmployeeEntity } from "../employee.entity.js";
 import { EmployeeRepository } from "../repository/employee.repository.js";
-import { GetEmployeeService } from "./employee.service.type.js";
+import { CreateEmployeeService, GetEmployeeService } from "./employee.service.type.js";
 
 export class EmployeeService {
     constructor(private employeeRepository: EmployeeRepository) {}
@@ -28,5 +29,21 @@ export class EmployeeService {
             await redisClient.set(data.cacheKey, JSON.stringify(result), { EX: 300 });
 
         return result;
+    };
+
+    registerEmployee = async (data: CreateEmployeeService) => {
+        const employee = new EmployeeEntity({ ...data });
+
+        const queryResult = await this.employeeRepository.createEmployee(employee);
+
+        if (!queryResult || !queryResult.data.id)
+            return null;
+
+        const cacheKeys = await redisClient.keys(`client:user:${data.idAdmin}:*`);
+
+        if (cacheKeys.length > 0)
+            await redisClient.del(cacheKeys);
+
+        return queryResult;
     };
 }
