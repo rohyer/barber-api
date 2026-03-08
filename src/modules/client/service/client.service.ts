@@ -82,8 +82,7 @@ export class ClientService {
             birth: data.birth,
         });
 
-        const updatedClient = await this.clientRepository
-            .updateClient(client);
+        const updatedClient = await this.clientRepository.updateClient(client);
 
         if (!updatedClient)
             return null;
