@@ -15,6 +15,10 @@ export const CreateEmployeeSchema = z.object({
 
 export const UpdateEmployeeSchema = CreateEmployeeSchema;
 
+export const ParamsSchema = z.object({
+    id: z.string().regex(/^\d+$/, "ID deve ser numérico"),
+});
+
 export type GetEmployeeDTO = z.infer<typeof GetEmployeeSchema>;
 
 export type CreateEmployeeDTO = z.infer<typeof CreateEmployeeSchema>;
