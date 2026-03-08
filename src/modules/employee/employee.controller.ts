@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import { AuthenticatedRequest } from "../../shared/types/express.type.js";
 import { Response as ExpressResponse } from "express";
 import { successHandler } from "../../shared/utils/successHandler.js";
-import { EmployeeService } from "./service/employee.service.js";
+import { EmployeeService } from "./employee.service.js";
 
 export class EmployeeController {
     constructor(private employeeService: EmployeeService) {};

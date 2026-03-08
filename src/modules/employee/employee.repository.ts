@@ -1,6 +1,16 @@
 import { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { FindAllEmployeesParams, FindAllEmployeesResponse } from "./employee.repository.type.js";
-import { EmployeeEntity, EmployeeEntityProps } from "../employee.entity.js";
+import { EmployeeEntity, EmployeeEntityProps } from "./employee.entity.js";
+
+export type FindAllEmployeesParams = {
+    idAdmin: number;
+    offset: number;
+    query: string;
+};
+
+export type FindAllEmployeesResponse = {
+    employees: EmployeeEntity[];
+    total: number;
+};
 
 export class EmployeeRepository {
     constructor(private readonly db: Pool) {};

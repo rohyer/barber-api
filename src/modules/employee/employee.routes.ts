@@ -7,8 +7,8 @@ import { cacheMiddleware } from "../../shared/middleware/cache.js";
 import getDatabaseConnection from "../../shared/config/db.js";
 import { validateRequest } from "../../shared/middleware/validateRequest.js";
 import { CreateEmployeeSchema, GetEmployeeSchema, ParamsSchema } from "./employee.dto.js";
-import { EmployeeRepository } from "./repository/employee.repository.js";
-import { EmployeeService } from "./service/employee.service.js";
+import { EmployeeRepository } from "./employee.repository.js";
+import { EmployeeService } from "./employee.service.js";
 
 const db = getDatabaseConnection();
 

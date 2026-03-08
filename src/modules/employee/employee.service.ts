@@ -1,7 +1,26 @@
-import redisClient from "../../../shared/config/redis-client.js";
-import { EmployeeEntity } from "../employee.entity.js";
-import { EmployeeRepository } from "../repository/employee.repository.js";
-import { CreateEmployeeService, DeleteEmployeeService, GetEmployeeService, UpdateEmployeeService } from "./employee.service.type.js";
+import redisClient from "../../shared/config/redis-client.js";
+import { EmployeeEntity } from "./employee.entity.js";
+import { EmployeeRepository } from "./employee.repository.js";
+import { CreateEmployeeDTO, DeleteEmployeeDTO, GetEmployeeDTO, UpdateEmployeeDTO } from "./employee.dto.js";
+
+export type GetEmployeeService = GetEmployeeDTO & {
+    idAdmin: number;
+    cacheKey: string | undefined;
+};
+
+export type CreateEmployeeService = CreateEmployeeDTO & {
+    idAdmin: number;
+    cacheKey: string | undefined;
+};
+
+export type UpdateEmployeeService = UpdateEmployeeDTO & {
+    idAdmin: number;
+    id: number;
+};
+
+export type DeleteEmployeeService = DeleteEmployeeDTO & {
+    idAdmin: number;
+};
 
 export class EmployeeService {
     constructor(private employeeRepository: EmployeeRepository) {}

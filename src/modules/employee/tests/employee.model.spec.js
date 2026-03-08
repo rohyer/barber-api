@@ -1,5 +1,5 @@
 import EmployeeModel from "./employee.model.js";
-import getConnectionDatabase from "../../shared/config/db.js";
+import getConnectionDatabase from "../../../shared/config/db.js";
 
 jest.mock("../config/db");
 
