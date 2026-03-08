@@ -30,8 +30,8 @@ export class EmployeeService {
 
         const queryResult = await this.employeeRepository.findAllEmployees({
             idAdmin: data.idAdmin,
-            offset,
             query: data.query,
+            offset,
         });
 
         if (!queryResult)
@@ -58,7 +58,7 @@ export class EmployeeService {
         if (!queryResult || !queryResult.data.id)
             return null;
 
-        const cacheKeys = await redisClient.keys(`client:user:${data.idAdmin}:*`);
+        const cacheKeys = await redisClient.keys(`employee:user:${data.idAdmin}:*`);
 
         if (cacheKeys.length > 0)
             await redisClient.del(cacheKeys);
@@ -88,7 +88,7 @@ export class EmployeeService {
         if (!updatedEmployee)
             return null;
 
-        const cacheKeys = await redisClient.keys(`client:user:${data.idAdmin}:*`);
+        const cacheKeys = await redisClient.keys(`employee:user:${data.idAdmin}:*`);
 
         if (cacheKeys.length > 0) 
             await redisClient.del(cacheKeys);
@@ -107,7 +107,7 @@ export class EmployeeService {
 
         const isDeletedClient = await this.employeeRepository.deleteEmployee(employee.data.id);
 
-        const cacheKeys = await redisClient.keys(`client:user:${data.idAdmin}:*`);
+        const cacheKeys = await redisClient.keys(`employee:user:${data.idAdmin}:*`);
 
         if (cacheKeys.length > 0)
             await redisClient.del(cacheKeys);
