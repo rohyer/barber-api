@@ -8,7 +8,6 @@ export type EmployeeEntityProps = {
     idAdmin: number;
     createdAt?: string;
     updatedAt?: string;
-    lastCustomerServiceDate?: string | null;
 };
 
 export class EmployeeEntity {
@@ -33,7 +32,6 @@ export class EmployeeEntity {
             idAdmin: row.idAdmin,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
-            lastCustomerServiceDate: row.lastCustomerServiceDate,
         });
     }
 
