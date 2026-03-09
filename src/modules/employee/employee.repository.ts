@@ -42,8 +42,6 @@ export class EmployeeRepository {
             [id],
         );
 
-        console.log("rowwws", employeeRows);
-
         if (employeeRows.length === 0)
             return null;
 
