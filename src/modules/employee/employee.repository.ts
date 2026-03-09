@@ -42,7 +42,9 @@ export class EmployeeRepository {
             [id],
         );
 
-        if (employeeRows.length !== 0)
+        console.log("rowwws", employeeRows);
+
+        if (employeeRows.length === 0)
             return null;
 
         const createdEmployee = EmployeeEntity.createFromDatabase(employeeRows[0]);
