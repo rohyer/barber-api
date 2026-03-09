@@ -6,6 +6,7 @@ export type EmployeeEntityProps = {
     address: string;
     birth: string;
     idAdmin: number;
+    totalAppointments?: number;
     createdAt?: string;
     updatedAt?: string;
 };
@@ -29,6 +30,7 @@ export class EmployeeEntity {
             phone: row.phone,
             address: row.address,
             birth: row.birth,
+            totalAppointments: row.totalAppointments,
             idAdmin: row.idAdmin,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
