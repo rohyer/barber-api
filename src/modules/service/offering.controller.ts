@@ -1,27 +1,35 @@
 import asyncHandler from "express-async-handler";
-import ServiceModel from "./service.model.js";
-import redisClient from "../../shared/config/redis-client.js";
+import ServiceModel from "./offering.repository.js";
 import { AuthenticatedRequest } from "../../shared/types/express.type.js";
 import { Response as ExpressResponse } from "express";
+import { successHandler } from "../../shared/utils/successHandler.js";
+import { OfferingService } from "./offering.service.js";
 
-/**
- * @description Get services
- * @route       GET /api/services
- * @access      Private
- */
-export const getServices = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
-    if (!req.user) {
-        res.status(401);
-        throw new Error("Usuário não autenticado!");
-    }
+export class OfferingController {
+    constructor(private offeringService: OfferingService) {};
 
-    const result = await ServiceModel.getServices(req.user.id);
+    /**
+     * @description Get services
+     * @route       GET /api/services
+     * @access      Private
+     */
+    getOfferings = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
+        const data = await this.offeringService.getOfferings({
+            ...req.query,
+            idAdmin: req.user!.id,
+            cacheKey: req.cacheKey,
+        });
 
-    if (req.cacheKey) 
-        await redisClient.set(req.cacheKey, JSON.stringify(result), { EX: 300 });
-
-    res.status(200).json(result);
-});
+        const responseData = {
+            status: 200,
+            message: "Clientes listados com sucesso.",
+            fromCache: false,
+            data,
+        };
+        
+        return successHandler(res, responseData);
+    });
+}
 
 /**
  * @description Set services
