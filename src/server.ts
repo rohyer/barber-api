@@ -4,7 +4,7 @@ import connectionDB from "./shared/config/db.js";
 import { confirmEmailChange } from "./modules/user/user.controller.js";
 
 import userRouter from "./modules/user/user.routes.js";
-import serviceRouter from "./modules/service/service.routes.js";
+import serviceRouter from "./modules/service/offering.routes.js";
 import employeeRouter from "./modules/employee/employee.routes.js";
 import clientRouter from "./modules/client/client.routes.js";
 import customerServiceRouter from "./modules/customer-service/customer-service.routes.js";
