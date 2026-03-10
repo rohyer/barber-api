@@ -2,8 +2,46 @@ import { ResultSetHeader, RowDataPacket } from "mysql2";
 import getDatabaseConnection from "../../shared/config/db.js";
 import redisClient from "../../shared/config/redis-client.js";
 import { IService } from "./service.type.js";
+import { Pool } from "mysql2/promise";
+import { OfferingEntity } from "./offering.entity.js";
 
-const ServiceModel = {
+type FindAllOfferingParams = {
+    idAdmin: number;
+    offset: number;
+    query: string;
+};
+
+type FindAllOfferingResponse = {
+    offerings: OfferingEntity[];
+    total: number;
+};
+
+export class OfferingRepository {
+    constructor(private readonly db: Pool) {}
+
+    async findAllOfferings(data: FindAllOfferingParams): Promise<FindAllOfferingResponse | null> {
+        const { idAdmin, offset, query } = data;
+
+        const [offeringRows] = await this.db.execute<(IService & RowDataPacket)[]>(
+            "SELECT id, name, value FROM service WHERE id_admin = ? AND (? = '' OR e.name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT OFFSET ?",
+            [idAdmin, query, query, offset],
+        );
+
+        const offerings = offeringRows.map(offeringRow => OfferingEntity.createFromDatabase(offeringRow));
+
+        const [totalRows] = await this.db.execute<RowDataPacket[]>(
+            "SELECT COUNT(*) AS total from service WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%'))",
+            [idAdmin, query, query],
+        );
+
+        const total = totalRows[0].total as number;
+
+        return {
+            offerings,
+            total,
+        };
+    };
+
     async getServiceByName(name: IService["name"]) {
         const db = getDatabaseConnection();
 
@@ -12,7 +50,7 @@ const ServiceModel = {
             [name],
         );
         return result;
-    },
+    };
 
     async getServiceById(id: IService["name"]) {
         const db = getDatabaseConnection();
@@ -22,17 +60,7 @@ const ServiceModel = {
             [id],
         );
         return result;
-    },
-
-    async getServices(idAdmin: IService["idAdmin"]) {
-        const db = getDatabaseConnection();
-
-        const [result] = await db.execute<(IService & RowDataPacket)[]>(
-            "SELECT id, name, value FROM service WHERE id_admin = ?",
-            [idAdmin],
-        );
-        return result;
-    },
+    };
 
     async createService({ name, value, idAdmin }: Omit<IService, "id">) {
         const db = getDatabaseConnection();
@@ -44,7 +72,7 @@ const ServiceModel = {
 
         await redisClient.del(`services:user:${idAdmin}`);
         return result;
-    },
+    };
 
     async updateService({ name, value, id, idAdmin }: IService) {
         const db = getDatabaseConnection();
@@ -56,7 +84,7 @@ const ServiceModel = {
 
         await redisClient.del(`services:user:${idAdmin}`);
         return result;
-    },
+    };
 
     async deleteService(id: IService["id"], idAdmin: IService["idAdmin"]) {
         const db = getDatabaseConnection();
@@ -65,7 +93,5 @@ const ServiceModel = {
 
         await redisClient.del(`services:user:${idAdmin}`);
         return result;
-    },
+    };
 };
-
-export default ServiceModel;
