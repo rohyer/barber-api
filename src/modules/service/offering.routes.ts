@@ -2,9 +2,9 @@ import express from "express";
 const router = express.Router();
 import { protect } from "../../shared/middleware/auth.js";
 import { cacheMiddleware } from "../../shared/middleware/cache.js";
-import { setService, updateService, deleteService, OfferingController } from "./offering.controller.js";
+import { OfferingController } from "./offering.controller.js";
 import { validateRequest } from "../../shared/middleware/validateRequest.js";
-import { GetOfferingSchema } from "./offering.dto.js";
+import { CreateOfferingSchema, GetOfferingSchema, ParamsSchema, UpdateOfferingSchema } from "./offering.dto.js";
 import { OfferingRepository } from "./offering.repository.js";
 import { OfferingService } from "./offering.service.js";
 import getDatabaseConnection from "../../shared/config/db.js";
@@ -26,19 +26,22 @@ router.get(
 router.post(
     "/",
     protect,
-    setService,
+    validateRequest(CreateOfferingSchema),
+    (req, res, next) => offeringController.registerOffering(req, res, next),
 );
 
 router.put(
     "/:id",
     protect,
-    updateService,
+    validateRequest(UpdateOfferingSchema),
+    (req, res, next) => offeringController.updateService(req, res, next),
 );
 
 router.delete(
     "/:id",
     protect,
-    deleteService,
+    validateRequest(ParamsSchema, "params"),
+    (req, res, next) => offeringController.deleteService(req, res, next),
 );
 
 export default router;
