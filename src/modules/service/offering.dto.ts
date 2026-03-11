@@ -10,6 +10,10 @@ export const CreateOfferingSchema = z.object({
     value: number().min(1, "Insira um valor válido"),
 });
 
+export const UpdateOfferingSchema = CreateOfferingSchema;
+
 export type GetOfferingDTO = z.infer<typeof GetOfferingSchema>;
 
 export type CreateOfferingDTO = z.infer<typeof CreateOfferingSchema>;
+
+export type UpdateOfferingDTO = z.infer<typeof UpdateOfferingSchema>;
