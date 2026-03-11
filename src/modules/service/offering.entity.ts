@@ -1,5 +1,5 @@
-type OfferingEntityProps = {
-    id: number;
+export type OfferingEntityProps = {
+    id?: number;
     name: string;
     value: number;
     idAdmin: number;
@@ -23,6 +23,13 @@ export class OfferingEntity {
             value: row.value,
             idAdmin: row.idAdmin,
         });
+    }
+
+    public update(data: Pick<OfferingEntityProps, "name" | "value">) {
+        this.props = {
+            ...this.props,
+            ...data,
+        };
     }
     
 }
