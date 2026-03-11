@@ -10,6 +10,10 @@ export const CreateOfferingSchema = z.object({
     value: number().min(1, "Insira um valor válido"),
 });
 
+export const ParamsSchema = z.object({
+    id: z.string().regex(/^\d+$/, "ID deve ser numérico"),
+});
+
 export const UpdateOfferingSchema = CreateOfferingSchema;
 
 export type GetOfferingDTO = z.infer<typeof GetOfferingSchema>;
@@ -17,3 +21,5 @@ export type GetOfferingDTO = z.infer<typeof GetOfferingSchema>;
 export type CreateOfferingDTO = z.infer<typeof CreateOfferingSchema>;
 
 export type UpdateOfferingDTO = z.infer<typeof UpdateOfferingSchema>;
+
+export type DeleteOfferingDTO = z.infer<typeof ParamsSchema>;
