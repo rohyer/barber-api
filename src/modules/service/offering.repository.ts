@@ -39,14 +39,15 @@ export class OfferingRepository {
         };
     };
 
-    // TODO: Fix
-    async findOfferingByName(name: OfferingEntityProps["name"], idAdmin: OfferingEntityProps["id"]) {
+    async isNameAvailable(name: OfferingEntityProps["name"], idAdmin: OfferingEntityProps["id"]) {
         const [offeringRows] = await this.db.execute<(OfferingEntityProps["name"] & RowDataPacket)[]>(
             "SELECT name FROM service WHERE name = ? AND id_admin = ? LIMIT 1",
             [name, idAdmin],
         );
 
-        return offeringRows;
+        const isAvailable = offeringRows.length === 0;
+
+        return isAvailable;
     };
 
     async findOfferingById(id: OfferingEntityProps["id"]): Promise<OfferingEntity | null> {
