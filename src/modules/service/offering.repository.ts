@@ -1,9 +1,8 @@
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import getDatabaseConnection from "../../shared/config/db.js";
 import redisClient from "../../shared/config/redis-client.js";
-import { IService } from "./service.type.js";
 import { Pool } from "mysql2/promise";
-import { OfferingEntity } from "./offering.entity.js";
+import { OfferingEntity, OfferingEntityProps } from "./offering.entity.js";
 
 type FindAllOfferingParams = {
     idAdmin: number;
@@ -22,7 +21,7 @@ export class OfferingRepository {
     async findAllOfferings(data: FindAllOfferingParams): Promise<FindAllOfferingResponse | null> {
         const { idAdmin, offset, query } = data;
 
-        const [offeringRows] = await this.db.execute<(IService & RowDataPacket)[]>(
+        const [offeringRows] = await this.db.execute<(OfferingEntity & RowDataPacket)[]>(
             "SELECT id, name, value FROM service WHERE id_admin = ? AND (? = '' OR e.name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT OFFSET ?",
             [idAdmin, query, query, offset],
         );
@@ -42,42 +41,51 @@ export class OfferingRepository {
         };
     };
 
-    async getServiceByName(name: IService["name"]) {
+    async getServiceByName(name: OfferingEntityProps["name"]) {
         const db = getDatabaseConnection();
 
-        const [result] = await db.execute<(IService & RowDataPacket)[]>(
+        const [offeringRows] = await db.execute<(OfferingEntityProps["name"] & RowDataPacket)[]>(
             "SELECT name FROM service WHERE name = ? LIMIT 1",
             [name],
         );
-        return result;
+
+        return offeringRows;
     };
 
-    async getServiceById(id: IService["name"]) {
+    async getServiceById(id: OfferingEntityProps["id"]): Promise<OfferingEntity | null> {
         const db = getDatabaseConnection();
 
-        const [result] = await db.execute<(IService & RowDataPacket)[]>(
+        const [offeringRow] = await db.execute<(OfferingEntity & RowDataPacket)[]>(
             "SELECT id, name, value, id_admin FROM service WHERE id = ? LIMIT 1",
             [id],
         );
-        return result;
+
+        if (offeringRow.length === 0)
+            return null;
+
+        const offering = OfferingEntity.createFromDatabase({ ...offeringRow[0] });
+
+        return offering;
     };
 
-    async createService({ name, value, idAdmin }: Omit<IService, "id">) {
-        const db = getDatabaseConnection();
+    async createService(offering: OfferingEntity) {
+        const { name, value, idAdmin } = offering.data;
 
-        const [result] = await db.execute<ResultSetHeader>(
+        const [result] = await this.db.execute<ResultSetHeader>(
             "INSERT INTO service (name, value, id_admin) VALUES (?, ?, ?)",
             [name, value, idAdmin],
         );
 
-        await redisClient.del(`services:user:${idAdmin}`);
-        return result;
+        const createdOffering = OfferingEntity
+            .createFromDatabase({ ...offering.data, id: result.insertId });
+
+        return createdOffering;
     };
 
-    async updateService({ name, value, id, idAdmin }: IService) {
-        const db = getDatabaseConnection();
+    async updateService(offering: OfferingEntity) {
+        const { name, value, id, idAdmin } = offering.data;
 
-        const [result] = await db.execute<ResultSetHeader>(
+        const [result] = await this.db.execute<ResultSetHeader>(
             "UPDATE service SET name = ?, value = ? WHERE id = ? LIMIT 1",
             [name, value, id],
         );
@@ -86,10 +94,8 @@ export class OfferingRepository {
         return result;
     };
 
-    async deleteService(id: IService["id"], idAdmin: IService["idAdmin"]) {
-        const db = getDatabaseConnection();
-
-        const [result] = await db.execute<ResultSetHeader>("DELETE FROM service WHERE id = ?", [id]);
+    async deleteService(id: OfferingEntityProps["id"], idAdmin: OfferingEntityProps["idAdmin"]) {
+        const [result] = await this.db.execute<ResultSetHeader>("DELETE FROM service WHERE id = ?", [id]);
 
         await redisClient.del(`services:user:${idAdmin}`);
         return result;
