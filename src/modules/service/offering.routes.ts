@@ -34,14 +34,14 @@ router.put(
     "/:id",
     protect,
     validateRequest(UpdateOfferingSchema),
-    (req, res, next) => offeringController.updateService(req, res, next),
+    (req, res, next) => offeringController.updateOffering(req, res, next),
 );
 
 router.delete(
     "/:id",
     protect,
     validateRequest(ParamsSchema, "params"),
-    (req, res, next) => offeringController.deleteService(req, res, next),
+    (req, res, next) => offeringController.deleteOffering(req, res, next),
 );
 
 export default router;
