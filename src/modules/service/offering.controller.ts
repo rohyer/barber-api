@@ -76,29 +76,5 @@ export class OfferingController {
         };
 
         return successHandler(res, responseData);
-
-        const service = await ServiceModel.getServiceById(req.params.id);
-
-        if (service.length === 0) {
-            res.status(400);
-            throw new Error("Serviço não encontrado");
-        }
-
-        if (service[0].id_admin !== req.user.id) {
-            res.status(401);
-            throw new Error("Usuário não autorizado");
-        }
-
-        const deletedService = await ServiceModel.deleteService(Number(req.params.id), req.user.id);
-
-        res.status(200).json({
-            success: true,
-            message: "Serviço deletado com sucesso",
-            data: {
-                id: req.params.id,
-                affectedRows: deletedService.affectedRows,
-            },
-        });
     });
-
 }
