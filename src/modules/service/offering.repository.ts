@@ -94,10 +94,11 @@ export class OfferingRepository {
         return result;
     };
 
-    async deleteService(id: OfferingEntityProps["id"], idAdmin: OfferingEntityProps["idAdmin"]) {
+    async deleteOffering(id: OfferingEntityProps["id"]) {
         const [result] = await this.db.execute<ResultSetHeader>("DELETE FROM service WHERE id = ?", [id]);
 
-        await redisClient.del(`services:user:${idAdmin}`);
-        return result;
+        const isDeleted = result.affectedRows > 0;
+
+        return isDeleted;
     };
 };
