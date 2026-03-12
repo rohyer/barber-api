@@ -51,14 +51,14 @@ export class OfferingService {
     };
 
     registerOffering = async(data: RegisterOfferingService) => {
-        const offeringExists = await this.offeringRepository.getServiceByName(data.name);
+        const isAvailable = await this.offeringRepository.isNameAvailable(data.name, data.idAdmin);
 
-        if (offeringExists.length > 0)
+        if (!isAvailable)
             throw new Error("Serviço já existente");
 
         const offering = new OfferingEntity({ ...data });
 
-        const queryResult = await this.offeringRepository.createService(offering);
+        const queryResult = await this.offeringRepository.createOffering(offering);
 
         if (!queryResult || !queryResult.data.id)
             throw new Error("Erro ao salvar serviço");
@@ -72,7 +72,7 @@ export class OfferingService {
     };
 
     updateOffering = async(data: UpdateOfferingService) => {
-        const offering = await this.offeringRepository.getServiceById(data.id);
+        const offering = await this.offeringRepository.findOfferingById(data.id);
 
         if (!offering || !offering.data.id)
             throw new Error("Serviço não encontrado");
@@ -85,7 +85,7 @@ export class OfferingService {
             value: data.value,
         });
 
-        const updatedOffering = await this.offeringRepository.updateService(offering);
+        const updatedOffering = await this.offeringRepository.updateOffering(offering);
 
         if (!updatedOffering)
             return null;
@@ -101,7 +101,7 @@ export class OfferingService {
     };
 
     deleteOffering = async (data: DeleteOfferingService) => {
-        const offering = await this.offeringRepository.getServiceById(Number(data.id));
+        const offering = await this.offeringRepository.findOfferingById(Number(data.id));
 
         if (!offering || !offering.data.id)
             throw new Error("Serviço não encontrado");
