@@ -1,5 +1,5 @@
 import redisClient from "../../shared/config/redis-client.js";
-import { CreateOfferingDTO, GetOfferingDTO, UpdateOfferingDTO } from "./offering.dto.js";
+import { CreateOfferingDTO, DeleteOfferingDTO, GetOfferingDTO, UpdateOfferingDTO } from "./offering.dto.js";
 import { OfferingEntity } from "./offering.entity.js";
 import { OfferingRepository } from "./offering.repository.js";
 
@@ -16,6 +16,10 @@ type RegisterOfferingService = CreateOfferingDTO & {
 type UpdateOfferingService = UpdateOfferingDTO & {
     idAdmin: number;
     id: number;
+};
+
+type DeleteOfferingService = DeleteOfferingDTO & {
+    idAdmin: number;
 };
 
 export class OfferingService {
@@ -94,5 +98,24 @@ export class OfferingService {
         return {
             data: updatedOffering,
         };
+    };
+
+    deleteOffering = async (data: DeleteOfferingService) => {
+        const offering = await this.offeringRepository.getServiceById(Number(data.id));
+
+        if (!offering || !offering.data.id)
+            throw new Error("Serviço não encontrado");
+
+        if (data.idAdmin !== offering.data.idAdmin)
+            throw new Error("Usuário não autorizado");
+
+        const isDeleted = await this.offeringRepository.deleteOffering(offering.data.id);
+
+        const cacheKeys = await redisClient.keys(`offering:user:${data.idAdmin}:*`);
+
+        if (cacheKeys.length > 0) 
+            await redisClient.del(cacheKeys);
+
+        return isDeleted;
     };
 }
