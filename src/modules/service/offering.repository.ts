@@ -39,7 +39,7 @@ export class OfferingRepository {
         };
     };
 
-    async isNameAvailable(name: OfferingEntityProps["name"], idAdmin: OfferingEntityProps["id"]) {
+    async isNameAvailable(name: OfferingEntityProps["name"], idAdmin: OfferingEntityProps["id"]): Promise<boolean> {
         const [offeringRows] = await this.db.execute<(OfferingEntityProps["name"] & RowDataPacket)[]>(
             "SELECT name FROM service WHERE name = ? AND id_admin = ? LIMIT 1",
             [name, idAdmin],
@@ -64,13 +64,16 @@ export class OfferingRepository {
         return offering;
     };
 
-    async createOffering(offering: OfferingEntity) {
+    async createOffering(offering: OfferingEntity): Promise<OfferingEntity | null> {
         const { name, value, idAdmin } = offering.data;
 
         const [result] = await this.db.execute<ResultSetHeader>(
             "INSERT INTO service (name, value, id_admin) VALUES (?, ?, ?)",
             [name, value, idAdmin],
         );
+
+        if (!result.insertId)
+            return null;
 
         const createdOffering = OfferingEntity
             .createFromDatabase({ ...offering.data, id: result.insertId });
@@ -94,7 +97,7 @@ export class OfferingRepository {
         return updatedOffering;
     };
 
-    async deleteOffering(id: OfferingEntityProps["id"]) {
+    async deleteOffering(id: OfferingEntityProps["id"]): Promise<boolean> {
         const [result] = await this.db.execute<ResultSetHeader>("DELETE FROM service WHERE id = ?", [id]);
 
         const isDeleted = result.affectedRows > 0;
