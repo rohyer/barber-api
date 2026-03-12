@@ -1,5 +1,5 @@
 import ServiceModel from "./service.model.js";
-import getDatabaseConnection from "../../shared/config/db.js";
+import getDatabaseConnection from "../../../shared/config/db.js";
 
 jest.mock("../config/db");
 
