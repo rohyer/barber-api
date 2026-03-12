@@ -1,6 +1,4 @@
 import { ResultSetHeader, RowDataPacket } from "mysql2";
-import getDatabaseConnection from "../../shared/config/db.js";
-import redisClient from "../../shared/config/redis-client.js";
 import { Pool } from "mysql2/promise";
 import { OfferingEntity, OfferingEntityProps } from "./offering.entity.js";
 
@@ -22,7 +20,7 @@ export class OfferingRepository {
         const { idAdmin, offset, query } = data;
 
         const [offeringRows] = await this.db.execute<(OfferingEntity & RowDataPacket)[]>(
-            "SELECT id, name, value FROM service WHERE id_admin = ? AND (? = '' OR e.name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT OFFSET ?",
+            "SELECT id, name, value FROM service WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT 10 OFFSET ?",
             [idAdmin, query, query, offset],
         );
 
@@ -41,21 +39,18 @@ export class OfferingRepository {
         };
     };
 
-    async getServiceByName(name: OfferingEntityProps["name"]) {
-        const db = getDatabaseConnection();
-
-        const [offeringRows] = await db.execute<(OfferingEntityProps["name"] & RowDataPacket)[]>(
-            "SELECT name FROM service WHERE name = ? LIMIT 1",
-            [name],
+    // TODO: Fix
+    async findOfferingByName(name: OfferingEntityProps["name"], idAdmin: OfferingEntityProps["id"]) {
+        const [offeringRows] = await this.db.execute<(OfferingEntityProps["name"] & RowDataPacket)[]>(
+            "SELECT name FROM service WHERE name = ? AND id_admin = ? LIMIT 1",
+            [name, idAdmin],
         );
 
         return offeringRows;
     };
 
-    async getServiceById(id: OfferingEntityProps["id"]): Promise<OfferingEntity | null> {
-        const db = getDatabaseConnection();
-
-        const [offeringRow] = await db.execute<(OfferingEntity & RowDataPacket)[]>(
+    async findOfferingById(id: OfferingEntityProps["id"]): Promise<OfferingEntity | null> {
+        const [offeringRow] = await this.db.execute<(OfferingEntity & RowDataPacket)[]>(
             "SELECT id, name, value, id_admin FROM service WHERE id = ? LIMIT 1",
             [id],
         );
@@ -68,7 +63,7 @@ export class OfferingRepository {
         return offering;
     };
 
-    async createService(offering: OfferingEntity) {
+    async createOffering(offering: OfferingEntity) {
         const { name, value, idAdmin } = offering.data;
 
         const [result] = await this.db.execute<ResultSetHeader>(
@@ -82,16 +77,20 @@ export class OfferingRepository {
         return createdOffering;
     };
 
-    async updateService(offering: OfferingEntity) {
-        const { name, value, id, idAdmin } = offering.data;
+    async updateOffering(offering: OfferingEntity): Promise<OfferingEntity | null> {
+        const { id, name, value } = offering.data;
 
         const [result] = await this.db.execute<ResultSetHeader>(
             "UPDATE service SET name = ?, value = ? WHERE id = ? LIMIT 1",
             [name, value, id],
         );
 
-        await redisClient.del(`services:user:${idAdmin}`);
-        return result;
+        if (result.affectedRows === 0)
+            return null;
+
+        const updatedOffering = OfferingEntity.createFromDatabase({ ...offering.data });
+
+        return updatedOffering;
     };
 
     async deleteOffering(id: OfferingEntityProps["id"]) {
