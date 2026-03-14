@@ -40,7 +40,7 @@ export class OfferingController {
         return successHandler(res, responseData);
     });
 
-    updateService = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
+    updateOffering = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
         const data = await this.offeringService.updateOffering({
             ...req.body,
             id: req.params.id,
@@ -57,7 +57,7 @@ export class OfferingController {
         return successHandler(res, responseData);
     });
 
-    deleteService = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
+    deleteOffering = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
         const isDeletedClient = await this.offeringService.deleteOffering({
             id: req.params.id,
             idAdmin: req.user!.id,
