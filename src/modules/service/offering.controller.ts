@@ -25,7 +25,7 @@ export class OfferingController {
     });
 
     registerOffering = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
-        const data = await this.offeringService.registerOffering({
+        const registeredOffering = await this.offeringService.registerOffering({
             ...req.body,
             idAdmin: req.user!.id,
         });
@@ -34,14 +34,14 @@ export class OfferingController {
             status: 201,
             message: "Serviço cadastrado com sucesso.",
             fromCache: false,
-            data,
+            data: registeredOffering.data,
         };
 
         return successHandler(res, responseData);
     });
 
     updateOffering = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
-        const data = await this.offeringService.updateOffering({
+        const updatedOffering = await this.offeringService.updateOffering({
             ...req.body,
             id: req.params.id,
             idAdmin: req.user!.id,
@@ -51,7 +51,7 @@ export class OfferingController {
             status: 200,
             message: "Serviço editado com sucesso",
             fromCache: false,
-            data,
+            data: updatedOffering?.data,
         };
 
         return successHandler(res, responseData);
