@@ -83,6 +83,7 @@ export class OfferingService {
         offering.update({
             name: data.name,
             value: data.value,
+            duration: data.duration,
         });
 
         const updatedOffering = await this.offeringRepository.updateOffering(offering);
@@ -95,9 +96,7 @@ export class OfferingService {
         if (cacheKeys.length > 0) 
             await redisClient.del(cacheKeys);
 
-        return {
-            data: updatedOffering,
-        };
+        return updatedOffering;
     };
 
     deleteOffering = async (data: DeleteOfferingService) => {
