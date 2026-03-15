@@ -20,7 +20,7 @@ export class OfferingRepository {
         const { idAdmin, offset, query } = data;
 
         const [offeringRows] = await this.db.execute<(OfferingEntity & RowDataPacket)[]>(
-            "SELECT id, name, value FROM service WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT 10 OFFSET ?",
+            "SELECT id, name, value, duration FROM service WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT 10 OFFSET ?",
             [idAdmin, query, query, offset],
         );
 
@@ -52,7 +52,7 @@ export class OfferingRepository {
 
     async findOfferingById(id: OfferingEntityProps["id"]): Promise<OfferingEntity | null> {
         const [offeringRow] = await this.db.execute<(OfferingEntity & RowDataPacket)[]>(
-            "SELECT id, name, value, id_admin FROM service WHERE id = ? LIMIT 1",
+            "SELECT id, name, value, duration, id_admin FROM service WHERE id = ? LIMIT 1",
             [id],
         );
 
@@ -65,11 +65,11 @@ export class OfferingRepository {
     };
 
     async createOffering(offering: OfferingEntity): Promise<OfferingEntity | null> {
-        const { name, value, idAdmin } = offering.data;
+        const { name, value, duration, idAdmin } = offering.data;
 
         const [result] = await this.db.execute<ResultSetHeader>(
-            "INSERT INTO service (name, value, id_admin) VALUES (?, ?, ?)",
-            [name, value, idAdmin],
+            "INSERT INTO service (name, value, duration, id_admin) VALUES (?, ?, ?, ?)",
+            [name, value, duration, idAdmin],
         );
 
         if (!result.insertId)
@@ -82,11 +82,11 @@ export class OfferingRepository {
     };
 
     async updateOffering(offering: OfferingEntity): Promise<OfferingEntity | null> {
-        const { id, name, value } = offering.data;
+        const { id, name, duration, value } = offering.data;
 
         const [result] = await this.db.execute<ResultSetHeader>(
-            "UPDATE service SET name = ?, value = ? WHERE id = ? LIMIT 1",
-            [name, value, id],
+            "UPDATE service SET name = ?, value = ?, duration = ? WHERE id = ? LIMIT 1",
+            [name, value, duration, id],
         );
 
         if (result.affectedRows === 0)
