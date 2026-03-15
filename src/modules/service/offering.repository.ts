@@ -52,7 +52,7 @@ export class OfferingRepository {
 
     async findOfferingById(id: OfferingEntityProps["id"]): Promise<OfferingEntity | null> {
         const [offeringRow] = await this.db.execute<(OfferingEntity & RowDataPacket)[]>(
-            "SELECT id, name, value, duration, id_admin FROM service WHERE id = ? LIMIT 1",
+            "SELECT id, name, value, duration, id_admin as idAdmin FROM service WHERE id = ? LIMIT 1",
             [id],
         );
 
