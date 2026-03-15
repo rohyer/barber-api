@@ -18,7 +18,7 @@ const offeringController = new OfferingController(offeringService);
 router.get(
     "/",
     protect,
-    cacheMiddleware("service"),
+    cacheMiddleware("offering"),
     validateRequest(GetOfferingSchema, "query"),
     (req, res, next) => offeringController.getOfferings(req, res, next),
 );
