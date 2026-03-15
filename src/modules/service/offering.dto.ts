@@ -8,6 +8,7 @@ export const GetOfferingSchema = z.object({
 export const CreateOfferingSchema = z.object({
     name: string().min(1, "Insira um nome válido"),
     value: number().min(1, "Insira um valor válido"),
+    duration: number().min(1, "Insira uma duração válida"),
 });
 
 export const ParamsSchema = z.object({
