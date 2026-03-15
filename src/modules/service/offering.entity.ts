@@ -2,6 +2,7 @@ export type OfferingEntityProps = {
     id?: number;
     name: string;
     value: number;
+    duration: number;
     idAdmin: number;
 };
 
@@ -21,6 +22,7 @@ export class OfferingEntity {
             id: row.id,
             name: row.name,
             value: row.value,
+            duration: row.duration,
             idAdmin: row.idAdmin,
         });
     }
