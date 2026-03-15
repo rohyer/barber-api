@@ -27,7 +27,7 @@ export class OfferingEntity {
         });
     }
 
-    public update(data: Pick<OfferingEntityProps, "name" | "value">) {
+    public update(data: Pick<OfferingEntityProps, "name" | "value" | "duration">) {
         this.props = {
             ...this.props,
             ...data,
