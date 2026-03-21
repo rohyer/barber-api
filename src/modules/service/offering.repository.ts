@@ -20,14 +20,14 @@ export class OfferingRepository {
         const { idAdmin, offset, query } = data;
 
         const [offeringRows] = await this.db.execute<(OfferingEntity & RowDataPacket)[]>(
-            "SELECT id, name, value, duration FROM service WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT 10 OFFSET ?",
+            "SELECT id, name, value, duration FROM offering WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT 10 OFFSET ?",
             [idAdmin, query, query, offset],
         );
 
         const offerings = offeringRows.map(offeringRow => OfferingEntity.createFromDatabase(offeringRow));
 
         const [totalRows] = await this.db.execute<RowDataPacket[]>(
-            "SELECT COUNT(*) AS total from service WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%'))",
+            "SELECT COUNT(*) AS total from offering WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%'))",
             [idAdmin, query, query],
         );
 
@@ -41,7 +41,7 @@ export class OfferingRepository {
 
     async isNameAvailable(name: OfferingEntityProps["name"], idAdmin: OfferingEntityProps["id"]): Promise<boolean> {
         const [offeringRows] = await this.db.execute<(OfferingEntityProps["name"] & RowDataPacket)[]>(
-            "SELECT name FROM service WHERE name = ? AND id_admin = ? LIMIT 1",
+            "SELECT name FROM offering WHERE name = ? AND id_admin = ? LIMIT 1",
             [name, idAdmin],
         );
 
@@ -52,7 +52,7 @@ export class OfferingRepository {
 
     async findOfferingById(id: OfferingEntityProps["id"]): Promise<OfferingEntity | null> {
         const [offeringRow] = await this.db.execute<(OfferingEntity & RowDataPacket)[]>(
-            "SELECT id, name, value, duration, id_admin as idAdmin FROM service WHERE id = ? LIMIT 1",
+            "SELECT id, name, value, duration, id_admin as idAdmin FROM offering WHERE id = ? LIMIT 1",
             [id],
         );
 
@@ -68,7 +68,7 @@ export class OfferingRepository {
         const { name, value, duration, idAdmin } = offering.data;
 
         const [result] = await this.db.execute<ResultSetHeader>(
-            "INSERT INTO service (name, value, duration, id_admin) VALUES (?, ?, ?, ?)",
+            "INSERT INTO offering (name, value, duration, id_admin) VALUES (?, ?, ?, ?)",
             [name, value, duration, idAdmin],
         );
 
@@ -85,7 +85,7 @@ export class OfferingRepository {
         const { id, name, duration, value } = offering.data;
 
         const [result] = await this.db.execute<ResultSetHeader>(
-            "UPDATE service SET name = ?, value = ?, duration = ? WHERE id = ? LIMIT 1",
+            "UPDATE offering SET name = ?, value = ?, duration = ? WHERE id = ? LIMIT 1",
             [name, value, duration, id],
         );
 
@@ -98,7 +98,7 @@ export class OfferingRepository {
     };
 
     async deleteOffering(id: OfferingEntityProps["id"]): Promise<boolean> {
-        const [result] = await this.db.execute<ResultSetHeader>("DELETE FROM service WHERE id = ?", [id]);
+        const [result] = await this.db.execute<ResultSetHeader>("DELETE FROM offering WHERE id = ?", [id]);
 
         const isDeleted = result.affectedRows > 0;
 
