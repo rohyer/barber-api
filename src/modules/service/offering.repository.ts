@@ -10,33 +10,22 @@ type FindAllOfferingParams = {
 
 type FindAllOfferingResponse = {
     offerings: OfferingEntity[];
-    total: number;
 };
 
 export class OfferingRepository {
     constructor(private readonly db: Pool) {}
 
     async findAllOfferings(data: FindAllOfferingParams): Promise<FindAllOfferingResponse | null> {
-        const { idAdmin, offset, query } = data;
+        const { idAdmin } = data;
 
         const [offeringRows] = await this.db.execute<(OfferingEntity & RowDataPacket)[]>(
-            "SELECT id, name, value, duration FROM offering WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT 10 OFFSET ?",
-            [idAdmin, query, query, offset],
+            "SELECT o.id, o.name, o.value, o.duration, GROUP_CONCAT(e.name SEPARATOR ', ') AS employeeNames, GROUP_CONCAT(e.id SEPARATOR ', ') AS employeeIds FROM offering o LEFT JOIN employee_offering eo ON o.id = eo.id_offering LEFT JOIN employee e ON eo.id_employee = e.id WHERE o.id_admin = ? GROUP BY o.id ORDER BY o.id DESC",
+            [idAdmin],
         );
 
         const offerings = offeringRows.map(offeringRow => OfferingEntity.createFromDatabase(offeringRow));
 
-        const [totalRows] = await this.db.execute<RowDataPacket[]>(
-            "SELECT COUNT(*) AS total from offering WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%'))",
-            [idAdmin, query, query],
-        );
-
-        const total = totalRows[0].total as number;
-
-        return {
-            offerings,
-            total,
-        };
+        return { offerings };
     };
 
     async isNameAvailable(name: OfferingEntityProps["name"], idAdmin: OfferingEntityProps["id"]): Promise<boolean> {
