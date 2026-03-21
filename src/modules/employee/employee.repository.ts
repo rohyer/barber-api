@@ -17,7 +17,7 @@ export class EmployeeRepository {
 
     findAllEmployees = async ({ idAdmin, offset, query }: FindAllEmployeesParams): Promise<FindAllEmployeesResponse | null> => {
         const [employeeRows] = await this.db.execute<(EmployeeEntityProps & RowDataPacket)[]>(
-            "SELECT e.id, e.name, e.address, e.sex, e.phone, e.birth, COUNT(cs.id) as totalAppointments, e.created_at AS createdAT FROM employee e LEFT JOIN appointment cs ON e.id = cs.id_employee WHERE e.id_admin = ? AND (? = '' OR e.name LIKE CONCAT('%', ?, '%')) GROUP BY e.id, e.name, e.address, e.sex, e.phone, e.birth, e.created_at ORDER BY e.id DESC LIMIT 10 OFFSET ?",
+            "SELECT e.id, e.name, e.address, e.sex, e.phone, e.birth, COUNT(a.id) as totalAppointments, e.created_at AS createdAT FROM employee e LEFT JOIN appointment a ON e.id = a.id_employee WHERE e.id_admin = ? AND (? = '' OR e.name LIKE CONCAT('%', ?, '%')) GROUP BY e.id, e.name, e.address, e.sex, e.phone, e.birth, e.created_at ORDER BY e.id DESC LIMIT 10 OFFSET ?",
             [idAdmin, query, query, offset],
         );
 
