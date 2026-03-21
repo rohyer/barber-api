@@ -17,7 +17,7 @@ export class ClientRepository {
 
     async getClients({ idAdmin, offset, query }: GetClientsParams): Promise<GetClientsResponse | null> {
         const [clientRows] = await this.db.execute<(ClientEntityProps & RowDataPacket)[]>(
-            "SELECT c.id, c.name, c.sex, c.phone, c.address, c.birth, c.created_at AS createdAt, c.id_admin as idAdmin, MAX(cs.date) AS lastCustomerServiceDate FROM client c LEFT JOIN customer_service cs ON c.id = cs.id_client WHERE c.id_admin = ? AND (? = '' OR c.name LIKE CONCAT('%', ?, '%')) GROUP BY c.id, c.name, c.sex, c.phone, c.address, c.birth ORDER BY c.id DESC LIMIT 10 OFFSET ?",
+            "SELECT c.id, c.name, c.sex, c.phone, c.address, c.birth, c.created_at AS createdAt, c.id_admin as idAdmin, MAX(cs.date) AS lastCustomerServiceDate FROM client c LEFT JOIN appointment cs ON c.id = cs.id_client WHERE c.id_admin = ? AND (? = '' OR c.name LIKE CONCAT('%', ?, '%')) GROUP BY c.id, c.name, c.sex, c.phone, c.address, c.birth ORDER BY c.id DESC LIMIT 10 OFFSET ?",
             [idAdmin, query, query, offset],
         );
 
