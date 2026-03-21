@@ -4,6 +4,8 @@ export type OfferingEntityProps = {
     value: number;
     duration: number;
     idAdmin: number;
+    employeeNames?: string;
+    employeeIds?: string;
 };
 
 export class OfferingEntity {
@@ -24,6 +26,8 @@ export class OfferingEntity {
             value: row.value,
             duration: row.duration,
             idAdmin: row.idAdmin,
+            employeeNames: row.employeeNames,
+            employeeIds: row.employeeIds,
         });
     }
 
