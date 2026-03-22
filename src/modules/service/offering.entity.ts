@@ -1,11 +1,15 @@
+type employee = {
+    id: number;
+    name: string;
+};
+
 export type OfferingEntityProps = {
     id?: number;
     name: string;
     value: number;
     duration: number;
     idAdmin: number;
-    employeeNames?: string;
-    employeeIds?: string;
+    employees?: employee[];
 };
 
 export class OfferingEntity {
@@ -26,8 +30,7 @@ export class OfferingEntity {
             value: row.value,
             duration: row.duration,
             idAdmin: row.idAdmin,
-            employeeNames: row.employeeNames,
-            employeeIds: row.employeeIds,
+            employees: row.employees,
         });
     }
 
