@@ -41,7 +41,6 @@ export class OfferingService {
 
         const result = {
             offerings,
-            total: queryResult.total,
         };
 
         if (data.cacheKey)
