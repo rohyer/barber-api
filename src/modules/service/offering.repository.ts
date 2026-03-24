@@ -12,18 +12,49 @@ type FindAllOfferingResponse = {
     offerings: OfferingEntity[];
 };
 
+type OfferingRows = Omit<OfferingEntityProps, "employees"> & RowDataPacket & {
+    employeeId: number;
+    employeeName: string;
+};
+
 export class OfferingRepository {
     constructor(private readonly db: Pool) {}
 
     async findAllOfferings(data: FindAllOfferingParams): Promise<FindAllOfferingResponse | null> {
         const { idAdmin } = data;
 
-        const [offeringRows] = await this.db.execute<(OfferingEntity & RowDataPacket)[]>(
-            "SELECT o.id, o.name, o.value, o.duration, GROUP_CONCAT(e.name SEPARATOR ', ') AS employeeNames, GROUP_CONCAT(e.id SEPARATOR ', ') AS employeeIds FROM offering o LEFT JOIN employee_offering eo ON o.id = eo.id_offering LEFT JOIN employee e ON eo.id_employee = e.id WHERE o.id_admin = ? GROUP BY o.id ORDER BY o.id DESC",
+        const [offeringRows] = await this.db.execute<(OfferingRows)[]>(
+            "SELECT o.id, o.name, o.value, o.duration, o.id_admin as idAdmin, e.id AS employeeId, e.name AS employeeName FROM offering o LEFT JOIN employee_offering eo ON o.id = eo.id_offering LEFT JOIN employee e ON eo.id_employee = e.id WHERE o.id_admin = ? ORDER BY o.id DESC",
             [idAdmin],
         );
 
-        const offerings = offeringRows.map(offeringRow => OfferingEntity.createFromDatabase(offeringRow));
+        // treatment of employees to insert them as an object correctly
+        const reducedOfferings = offeringRows.reduce<OfferingEntityProps[]>((accumulator, currentValue) => {
+            let offering = accumulator.find(offering => offering.id === currentValue.id);
+
+            if (!offering) {
+                offering = {
+                    id: currentValue.id,
+                    name: currentValue.name,
+                    value: currentValue.value,
+                    duration: currentValue.duration,
+                    idAdmin: currentValue.idAdmin,
+                    employees: [],
+                };
+                accumulator.push(offering);
+            }
+
+            if (currentValue.employeeId && offering.employees) {
+                offering.employees.push({
+                    id: currentValue.employeeId,
+                    name: currentValue.employeeName,
+                });
+            }
+
+            return accumulator;
+        }, []);
+        
+        const offerings = reducedOfferings.map(reducedOffering => OfferingEntity.createFromDatabase(reducedOffering));
 
         return { offerings };
     };
