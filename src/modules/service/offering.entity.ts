@@ -8,7 +8,7 @@ export type OfferingEntityProps = {
     name: string;
     value: number;
     duration: number;
-    idAdmin: number;
+    idAdmin?: number;
     employees?: employee[];
 };
 

@@ -96,7 +96,12 @@ export class OfferingRepository {
             return null;
 
         const createdOffering = OfferingEntity
-            .createFromDatabase({ ...offering.data, id: result.insertId });
+            .createFromDatabase({
+                name: offering.data.name,
+                value: offering.data.value,
+                duration: offering.data.duration,
+                id: result.insertId,
+            });
 
         return createdOffering;
     };
