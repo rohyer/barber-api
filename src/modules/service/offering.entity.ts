@@ -27,7 +27,7 @@ export class OfferingEntity {
         return new OfferingEntity({
             id: row.id,
             name: row.name,
-            value: row.value,
+            value: Number(row.value),
             duration: row.duration,
             idAdmin: row.idAdmin,
             employees: row.employees,
