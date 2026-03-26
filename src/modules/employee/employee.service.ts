@@ -25,6 +25,21 @@ export type DeleteEmployeeService = DeleteEmployeeDTO & {
 export class EmployeeService {
     constructor(private employeeRepository: EmployeeRepository) {}
 
+    getEmployeeOptions = async ({ idAdmin }: { idAdmin: number }) => {
+        const queryResult = await this.employeeRepository.findAllEmployeeOptions(idAdmin);
+
+        if (!queryResult)
+            return null;
+
+        const employees = queryResult.employees.map(employee => employee.data);
+
+        const result = {
+            employees,
+        };
+
+        return result;
+    };
+    
     getEmployees = async (data: GetEmployeeService) => {
         const offset = (data.page - 1) * 10;
 
