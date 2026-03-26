@@ -15,6 +15,19 @@ export type FindAllEmployeesResponse = {
 export class EmployeeRepository {
     constructor(private readonly db: Pool) {};
 
+    findAllEmployeeOptions = async (idAdmin: FindAllEmployeesParams["idAdmin"]) => {
+        const [employeeNameRows] = await this.db.execute<(Pick<EmployeeEntityProps, "id" | "name">  & RowDataPacket)[]>(
+            "SELECT id, name from employee WHERE id_admin = ?",
+            [idAdmin],
+        );
+
+        console.log(employeeNameRows);
+
+        const employees = employeeNameRows.map(employeeNameRow => EmployeeEntity.createFromDatabase(employeeNameRow));
+
+        return { employees };
+    };
+
     findAllEmployees = async ({ idAdmin, offset, query }: FindAllEmployeesParams): Promise<FindAllEmployeesResponse | null> => {
         const [employeeRows] = await this.db.execute<(EmployeeEntityProps & RowDataPacket)[]>(
             "SELECT e.id, e.name, e.address, e.sex, e.phone, e.birth, COUNT(a.id) as totalAppointments, e.created_at AS createdAT FROM employee e LEFT JOIN appointment a ON e.id = a.id_employee WHERE e.id_admin = ? AND (? = '' OR e.name LIKE CONCAT('%', ?, '%')) GROUP BY e.id, e.name, e.address, e.sex, e.phone, e.birth, e.created_at ORDER BY e.id DESC LIMIT 10 OFFSET ?",
