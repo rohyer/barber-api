@@ -50,11 +50,6 @@ export class OfferingService {
     };
 
     registerOffering = async(data: RegisterOfferingService) => {
-        const isAvailable = await this.offeringRepository.isNameAvailable(data.name, data.idAdmin);
-
-        if (!isAvailable)
-            throw new Error("Serviço já existente");
-
         const offering = new OfferingEntity({ ...data });
 
         const queryResult = await this.offeringRepository.createOffering(offering);
