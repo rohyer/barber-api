@@ -9,6 +9,7 @@ export type OfferingEntityProps = {
     value: number;
     duration: number;
     idAdmin?: number;
+    idEmployees?: number[];
     employees?: employee[];
 };
 
