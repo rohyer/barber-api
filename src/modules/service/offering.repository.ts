@@ -85,14 +85,28 @@ export class OfferingRepository {
     };
 
     async createOffering(offering: OfferingEntity): Promise<OfferingEntity | null> {
-        const { name, value, duration, idAdmin } = offering.data;
-
-        const [result] = await this.db.execute<ResultSetHeader>(
+        const { name, value, duration, idEmployees, idAdmin } = offering.data;
+        
+        const [offeringResult] = await this.db.execute<ResultSetHeader>(
             "INSERT INTO offering (name, value, duration, id_admin) VALUES (?, ?, ?, ?)",
             [name, value, duration, idAdmin],
         );
+        
+        if (!offeringResult.insertId)
+            return null;
+        
+        const valuesToInsert = idEmployees?.map(idEmployee => [
+            offeringResult.insertId,
+            idEmployee,
+            idAdmin,
+        ]);
 
-        if (!result.insertId)
+        const [employeeOfferingResult] = await this.db.query<ResultSetHeader>(
+            "INSERT INTO employee_offering (id_offering, id_employee, id_admin) VALUES ?",
+            [valuesToInsert],
+        );
+
+        if (!employeeOfferingResult.insertId)
             return null;
 
         const createdOffering = OfferingEntity
@@ -100,7 +114,7 @@ export class OfferingRepository {
                 name: offering.data.name,
                 value: offering.data.value,
                 duration: offering.data.duration,
-                id: result.insertId,
+                id: offeringResult.insertId,
             });
 
         return createdOffering;
