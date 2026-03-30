@@ -17,6 +17,13 @@ const employeeService = new EmployeeService(employeeRepository);
 const employeeController = new EmployeeController(employeeService);
 
 router.get(
+    "/options",
+    protect,
+    cacheMiddleware("employee"),
+    (req, res, next) => employeeController.getEmployeeOptions(req, res, next),
+);
+
+router.get(
     "/",
     protect,
     validateRequest(GetEmployeeSchema, "query"),

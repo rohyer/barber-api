@@ -8,6 +8,24 @@ export class EmployeeController {
     constructor(private employeeService: EmployeeService) {};
     
     /**
+     * @description Get all employee names
+     * @route       GET /api/employees
+     * @access      Private
+     */
+    getEmployeeOptions = asyncHandler(async (req: AuthenticatedRequest, res: ExpressResponse) => {
+        const data = await this.employeeService.getEmployeeOptions({ idAdmin: req.user!.id });
+    
+        const responseData = {
+            status: 200,
+            message: "Colaboradores listados com sucesso.",
+            fromCache: false,
+            data,
+        };
+    
+        return successHandler(res, responseData);
+    });
+    
+    /**
      * @description Get all employees
      * @route       GET /api/employees
      * @access      Private
