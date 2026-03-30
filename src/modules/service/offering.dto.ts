@@ -1,4 +1,4 @@
-import z, { number, string } from "zod";
+import z, { array, number, string } from "zod";
 
 export const GetOfferingSchema = z.object({
     page: z.coerce.number().min(1).default(1),
@@ -9,6 +9,7 @@ export const CreateOfferingSchema = z.object({
     name: string().min(1, "Insira um nome válido"),
     value: number().min(1, "Insira um valor válido"),
     duration: number().min(1, "Insira uma duração válida"),
+    idEmployees: array(number().min(1, "Insira um colaborador válido")),
 });
 
 export const ParamsSchema = z.object({
