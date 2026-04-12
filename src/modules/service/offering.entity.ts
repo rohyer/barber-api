@@ -9,7 +9,7 @@ export type OfferingEntityProps = {
     value: number;
     duration: number;
     idAdmin?: number;
-    idEmployees?: number[];
+    employeeIds?: number[];
     employees?: employee[];
 };
 
@@ -35,7 +35,7 @@ export class OfferingEntity {
         });
     }
 
-    public update(data: Pick<OfferingEntityProps, "name" | "value" | "duration">) {
+    public update(data: Pick<OfferingEntityProps, "name" | "value" | "duration" | "employeeIds">) {
         this.props = {
             ...this.props,
             ...data,

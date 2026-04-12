@@ -78,6 +78,7 @@ export class OfferingService {
             name: data.name,
             value: data.value,
             duration: data.duration,
+            employeeIds: data.employeeIds,
         });
 
         const updatedOffering = await this.offeringRepository.updateOffering(offering);

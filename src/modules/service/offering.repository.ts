@@ -85,7 +85,7 @@ export class OfferingRepository {
     };
 
     async createOffering(offering: OfferingEntity): Promise<OfferingEntity | null> {
-        const { name, value, duration, idEmployees, idAdmin } = offering.data;
+        const { name, value, duration, employeeIds, idAdmin } = offering.data;
         
         const [offeringResult] = await this.db.execute<ResultSetHeader>(
             "INSERT INTO offering (name, value, duration, id_admin) VALUES (?, ?, ?, ?)",
@@ -95,9 +95,9 @@ export class OfferingRepository {
         if (!offeringResult.insertId)
             return null;
         
-        const valuesToInsert = idEmployees?.map(idEmployee => [
+        const valuesToInsert = employeeIds?.map(employeeId => [
             offeringResult.insertId,
-            idEmployee,
+            employeeId,
             idAdmin,
         ]);
 
@@ -121,15 +121,37 @@ export class OfferingRepository {
     };
 
     async updateOffering(offering: OfferingEntity): Promise<OfferingEntity | null> {
-        const { id, name, duration, value } = offering.data;
+        const { id, name, duration, value, employeeIds, idAdmin } = offering.data;
 
-        const [result] = await this.db.execute<ResultSetHeader>(
+        console.log("ID da Oferta:", id);
+        console.log("Admin Logado:", idAdmin);
+        console.log("IDs dos Funcionários que chegaram no Repo:", employeeIds);
+
+        const [updateResult] = await this.db.execute<ResultSetHeader>(
             "UPDATE offering SET name = ?, value = ?, duration = ? WHERE id = ? LIMIT 1",
             [name, value, duration, id],
         );
 
-        if (result.affectedRows === 0)
+        if (updateResult.affectedRows === 0)
             return null;
+
+        await this.db.execute<ResultSetHeader>(
+            "DELETE FROM employee_offering where id_offering = ? AND id_admin = ?",
+            [id, idAdmin],
+        );
+
+        if (employeeIds && employeeIds.length > 0) {
+            const valuesToUpdate = employeeIds?.map(employeeId => [
+                id,
+                employeeId,
+                idAdmin,
+            ]);
+            
+            await this.db.query<ResultSetHeader>(
+                "INSERT INTO employee_offering (id_offering, id_employee, id_admin) VALUES ?",
+                [valuesToUpdate],
+            );
+        }
 
         const updatedOffering = OfferingEntity.createFromDatabase({ ...offering.data });
 
