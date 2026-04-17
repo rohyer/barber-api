@@ -3,6 +3,7 @@ import express from "express";
 import connectionDB from "./shared/config/db.js";
 import { confirmEmailChange } from "./modules/user/user.controller.js";
 
+import authRouter from "./modules/auth/auth.routes.js";
 import userRouter from "./modules/user/user.routes.js";
 import serviceRouter from "./modules/service/offering.routes.js";
 import employeeRouter from "./modules/employee/employee.routes.js";
@@ -31,6 +32,8 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use("/api/auth", authRouter);
 
 app.use("/api/users", userRouter);
 
