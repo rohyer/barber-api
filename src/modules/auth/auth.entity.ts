@@ -1,4 +1,5 @@
-type AuthEntityProps = {
+export type AuthEntityProps = {
+    id: number;
     name: string;
     email: string;
     password: string;
@@ -16,6 +17,7 @@ export class AuthEntity {
 
     static createFromDatabase(row: any): AuthEntity {
         return new AuthEntity({
+            id: row.id,
             name: row.name,
             email: row.email,
             password: row.password,
