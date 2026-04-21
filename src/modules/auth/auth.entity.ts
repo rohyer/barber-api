@@ -1,11 +1,12 @@
 export type AuthEntityProps = {
-    id: number;
+    id?: number;
     name: string;
     email: string;
     password: string;
     city: string;
     state: string;
     phone: string;
+    premiumExpiresAt?: Date;
 };
 
 export class AuthEntity {
@@ -13,6 +14,10 @@ export class AuthEntity {
 
     constructor(props: AuthEntityProps) {
         this.props = { ...props };
+    }
+
+    get data() {
+        return { ...this.props };
     }
 
     static createFromDatabase(row: any): AuthEntity {
@@ -24,6 +29,7 @@ export class AuthEntity {
             city: row.city,
             state: row.state,
             phone: row.phone,
+            premiumExpiresAt: row.phone,
         });
     }
 }
