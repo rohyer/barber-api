@@ -1,6 +1,7 @@
 import z from "zod";
+import { Barbershop, LoginBarbershop } from "./auth.type.js";
 
-export const registerBarbeShopSchema = z.object({
+export const registerBarbershopSchema = z.object({
     name: z.string(),
     email: z.email(),
     password: z.string(),
@@ -8,9 +9,16 @@ export const registerBarbeShopSchema = z.object({
     city: z.string(),
     state: z.string(),
     phone: z.string(),
-}).refine(data => data.password === data.passwordConfirm, {
-    error: "A confirmação de senha deve ser igual à senha digitada",
-    path: ["passwordConfirm"],
-});
+}) satisfies z.ZodType<Barbershop>;
 
-export type RegisterBarberShop = z.infer<typeof registerBarbeShopSchema>;
+export const registerBarbershopInputSchema = registerBarbershopSchema
+    .extend({ passowrdConfirm: z.string() })
+    .refine(data => data.password === data.passwordConfirm, {
+        error: "A confirmação deve ser igual a senha digitada",
+        path: ["passwordConfirm"],
+    });
+
+export const loginBarbershopSchema = z.object({
+    email: z.email(),
+    password: z.string(),
+}) satisfies z.ZodType<LoginBarbershop>;
