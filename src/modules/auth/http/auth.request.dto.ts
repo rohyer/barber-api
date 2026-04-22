@@ -1,5 +1,5 @@
 import z from "zod";
-import { Barbershop, LoginBarbershop } from "./auth.type.js";
+import { Barbershop, LoginBarbershop } from "../auth.type.js";
 
 export const registerBarbershopSchema = z.object({
     name: z.string(),
