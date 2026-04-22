@@ -1,4 +1,4 @@
-import z, { ZodType } from "zod";
+import { ZodType } from "zod";
 import { AuthenticatedRequest } from "../types/express.type.js";
 import { Response as ExpressResponse, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
