@@ -8,6 +8,7 @@ import { AuthRepository } from "../auth.repository.js";
 import getDatabaseConnection from "../../../shared/config/db.js";
 import { JwtService } from "../jwt.service.js";
 import { HashService } from "../hash.service.js";
+import { authMe } from "../auth.middleware.js";
 
 const db = getDatabaseConnection();
 
@@ -28,6 +29,12 @@ router.post(
     "/login",
     validateRequest(loginBarbershopSchema),
     (req, res, next) => authController.loginUser(req, res, next),
+);
+
+router.post(
+    "/me",
+    authMe,
+    (req, res, next) => authController.me(req, res, next),
 );
 
 export default router;
