@@ -18,7 +18,9 @@ export const authMe = asyncHandler(async(req: AuthenticatedRequest, res: Respons
 
         const payload = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
 
-        req.token = payload;
+        req.user = {
+            id: payload.id,
+        };
 
         next();
     } catch {

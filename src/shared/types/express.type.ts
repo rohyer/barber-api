@@ -1,6 +1,5 @@
 import { Request as ExpressRequest } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
-import { JwtPayload } from "jsonwebtoken";
 
 export interface IUserPayload {
     id: number;
@@ -14,5 +13,4 @@ export interface AuthenticatedRequest<
 > extends ExpressRequest<Params, ResBody, ReqBody, ReqQuery> {
     user?: IUserPayload;
     cacheKey?: string;
-    token?: JwtPayload;
 }
