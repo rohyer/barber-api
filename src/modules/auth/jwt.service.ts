@@ -6,7 +6,7 @@ export class JwtService {
             throw new Error("Variável de ambiente não definida");
     
         return jwt.sign(
-            { id: barbershopId.toString() },
+            { id: barbershopId },
             process.env.JWT_SECRET,
             { expiresIn: "7d" },
         );
