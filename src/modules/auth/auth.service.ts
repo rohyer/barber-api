@@ -1,20 +1,57 @@
-import { RegisterBarberShop } from "./auth.dto.js";
 import { AuthRepository } from "./auth.repository.js";
+import { JwtService } from "./jwt.service.js";
+import { Barbershop, LoginBarbershop } from "./auth.type.js";
+import { HashService } from "./hash.service.js";
 
 export class AuthService {
-    constructor(private authRepository: AuthRepository) {}
+    constructor(
+        private authRepository: AuthRepository,
+        private jwtService: JwtService,
+        private hashService: HashService,
+    ) {}
 
-    createBarbershop = async (barbershopData: RegisterBarberShop) => {
-        const isEmailAvailable = await this.authRepository.isEmailAvailable(barbershopData.email);
+    createBarbershop = async (barbershopData: Barbershop) => {
+        const isEmailRegistered = await this.authRepository.isEmailRegistered(barbershopData.email);
 
-        if (!isEmailAvailable)
+        if (isEmailRegistered)
             throw new Error("E-mail não disponível");
 
-        const barbershopEntity = await this.authRepository.insertBarbershop(barbershopData);
+        const passwordHashed = await this.hashService.hash(barbershopData.password);
 
-        if (!barbershopData)
+        const dateNow = new Date();
+        const premiumExpiresAt = new Date(dateNow.getTime() + 31 * 24 * 60 * 60 * 1000);
+
+        const barbershopEntity = await this.authRepository.insertBarbershop({
+            ...barbershopData,
+            password: passwordHashed,
+            premiumExpiresAt,
+        });
+
+        if (!barbershopEntity || !barbershopEntity.data.id)
             throw new Error("Erro ao criar usuário");
         
+        return {
+            data: barbershopEntity,
+            token: this.jwtService.generateToken(barbershopEntity.data.id),
+        };
+    };
+
+    loginBarbershop = async(barbershopData: LoginBarbershop) => {
+        const isEmailRegistered = await this.authRepository.isEmailRegistered(barbershopData.email);
+
+        if (!isEmailRegistered)
+            throw new Error("E-mail não encontrado");
+    
+        const barbershopEntity = await this.authRepository.findUserByEmail(barbershopData.email);
+
+        if (!barbershopEntity)
+            throw new Error("Usuário não encontrado");
+
+        const isCorrectPassword = await this.hashService.compare(barbershopData.password, barbershopEntity.data.password);
+
+        if (!isCorrectPassword)
+            throw new Error("Senha inválida");
+
         return barbershopEntity;
     };
 }
