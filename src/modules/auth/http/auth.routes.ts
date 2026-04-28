@@ -31,10 +31,10 @@ router.post(
     (req, res, next) => authController.loginUser(req, res, next),
 );
 
-router.post(
+router.get(
     "/me",
     authMe,
-    (req, res, next) => authController.me(req, res, next),
+    (req, res, next) => authController.authMe(req, res, next),
 );
 
 export default router;
