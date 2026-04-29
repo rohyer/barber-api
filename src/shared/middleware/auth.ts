@@ -1,35 +1,43 @@
 import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
-import UserModel from "../../modules/user/user.model.js";
 import { JwtPayload } from "jsonwebtoken";
-import { AuthenticatedRequest, IUserPayload } from "../types/express.type.js";
+import { AuthenticatedRequest } from "../types/express.type.js";
+import { AUTH } from "../../modules/auth/auth.constants.js";
 
 export const protect = asyncHandler(async (req: AuthenticatedRequest, res, next) => {
-    let token;
+    const token = req.cookies[AUTH.COOKIE_NAME];
 
-    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-        try {
-            token = req.headers.authorization.split(" ")[1];
+    if (!token) {
+        res.status(401).json({ message: "Usuário não autenticado" });
+        return;
+    }
 
-            if (!process.env.JWT_SECRET) 
-                throw new Error("JWT_SECRET não definido!");
+    if (!process.env.JWT_SECRET) 
+        throw new Error("JWT_SECRET não definido!");
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+    try {
+        const payload = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
 
-            const result = await UserModel.getUserById(decoded.id);
+        req.user = {
+            id: payload.id,
+            name: payload.name,
+            email: payload.email,
+        };
 
-            if (!result || result.length === 0) {
-                res.status(401);
-                throw new Error("Usuário não encontrado");
-            }
+        next();
+    } catch (error) {
+        res.clearCookie(AUTH.COOKIE_NAME);
 
-            req.user = result[0] as IUserPayload;
-
-            next();
-        } catch (error) {
-            throw new Error("Não autorizado", { cause: error });
+        if (error instanceof jwt.TokenExpiredError) {
+            res.status(401).json({ message: "Sessão expirada" });
+            return;
         }
-    } else 
-        throw new Error("Sem autorização");
-    
+
+        if (error instanceof jwt.JsonWebTokenError) {
+            res.status(401).json({ message: "Token inválido" });
+            return;
+        }
+
+        res.status(401).json({ message: "Usuário não autenticado" });
+    }
 });
