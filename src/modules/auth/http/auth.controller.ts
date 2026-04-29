@@ -44,7 +44,7 @@ export class AuthController {
     });
 
     loginUser = asyncHandler(async(req: AuthenticatedRequest, res: ExpressResponse) => {
-        const data = await this.authService.loginBarbershop(req.body);
+        const { data, token } = await this.authService.loginBarbershop(req.body);
 
         const validateResponse = toLoginResponse(data);
 
@@ -55,12 +55,25 @@ export class AuthController {
             data: validateResponse,
         };
 
+        res.status(200).cookie(AUTH.COOKIE_NAME, token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: true,
+            maxAge: AUTH.COOKIE_MAX_AGE,
+        });
+
         return successHandler(res, response);
     });
 
-    me = asyncHandler(async(req: AuthenticatedRequest, res: ExpressResponse) => {
-        res.json({ user: req.token });
-        return;
+    authMe = asyncHandler(async(req: AuthenticatedRequest, res: ExpressResponse) => {
+        const response = {
+            status: 200,
+            message: "Autenticação feita com sucesso",
+            fromCache: false,
+            data: req?.user,
+        };
+
+        return successHandler(res, response);
     });
 
 }
