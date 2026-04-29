@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { protect } from "../../shared/middleware/auth.js";
+import { protect } from "../../shared/middleware/protect.js";
 import {
     updateUserData,
     updateUserPassword,

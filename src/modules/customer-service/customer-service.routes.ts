@@ -6,7 +6,7 @@ import {
     updateCustomerService,
     deleteCustomerService,
 } from "./customer-service.controller.js";
-import { protect } from "../../shared/middleware/auth.js";
+import { protect } from "../../shared/middleware/protect.js";
 import { cacheMiddleware } from "../../shared/middleware/cache.js";
 
 router.get("/", protect, cacheMiddleware("customer-service"), getCustomerServices);

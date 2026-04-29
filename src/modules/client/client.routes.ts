@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { protect } from "../../shared/middleware/auth.js";
+import { protect } from "../../shared/middleware/protect.js";
 import { cacheMiddleware } from "../../shared/middleware/cache.js";
 import { ClientService } from "./client.service.js";
 import { ClientController } from "./client.controller.js";

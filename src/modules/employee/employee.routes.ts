@@ -2,7 +2,7 @@ import express from "express";
 
 const router = express.Router();
 import { EmployeeController } from "./employee.controller.js";
-import { protect } from "../../shared/middleware/auth.js";
+import { protect } from "../../shared/middleware/protect.js";
 import { cacheMiddleware } from "../../shared/middleware/cache.js";
 import getDatabaseConnection from "../../shared/config/db.js";
 import { validateRequest } from "../../shared/middleware/validateRequest.js";

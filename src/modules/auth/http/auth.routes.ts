@@ -8,7 +8,7 @@ import { AuthRepository } from "../auth.repository.js";
 import getDatabaseConnection from "../../../shared/config/db.js";
 import { JwtService } from "../jwt.service.js";
 import { HashService } from "../hash.service.js";
-import { authMe } from "../auth.middleware.js";
+import { protect } from "../../../shared/middleware/protect.js";
 
 const db = getDatabaseConnection();
 
@@ -33,7 +33,7 @@ router.post(
 
 router.get(
     "/me",
-    authMe,
+    protect,
     (req, res, next) => authController.authMe(req, res, next),
 );
 
