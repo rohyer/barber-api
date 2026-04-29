@@ -30,9 +30,11 @@ export class AuthService {
         if (!barbershopEntity || !barbershopEntity.data.id)
             throw new Error("Erro ao criar usuário");
         
+        const token = this.jwtService.generateToken(barbershopEntity.data);
+
         return {
             data: barbershopEntity,
-            token: this.jwtService.generateToken(barbershopEntity.data.id),
+            token,
         };
     };
 
@@ -52,6 +54,11 @@ export class AuthService {
         if (!isCorrectPassword)
             throw new Error("Senha inválida");
 
-        return barbershopEntity;
+        const token = this.jwtService.generateToken(barbershopEntity.data);
+
+        return {
+            data: barbershopEntity,
+            token,
+        };
     };
 }
