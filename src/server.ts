@@ -12,6 +12,7 @@ import customerServiceRouter from "./modules/customer-service/customer-service.r
 import statisticsRouter from "./modules/statistics/statistics.routes.js";
 import cors, { CorsOptions } from "cors";
 import { errorHandler } from "./shared/middleware/error.js";
+import cookieParser from "cookie-parser";
 
 const port = process.env.PORT || 5000;
 
@@ -28,6 +29,7 @@ connectionDB();
 
 const app = express();
 
+app.use(cookieParser());
 app.use(cors(corsOptions));
 
 app.use(express.json());
