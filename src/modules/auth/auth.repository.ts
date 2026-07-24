@@ -57,4 +57,18 @@ export class AuthRepository {
 
         return userEntity;
     };
+
+    findUserById = async (id: AuthEntityProps["id"]): Promise<AuthEntity | null> => {
+        const [result] = await this.db.execute<AuthEntityProps & RowDataPacket[]>(
+            "SELECT id, name, email, password, city, state, phone, premium_expires_at as premiumExpiresAt from admin WHERE id = ? LIMIT 1",
+            [id],
+        );
+
+        if (result.length === 0)
+            return null;
+
+        const userEntity = AuthEntity.createFromDatabase({ ...result[0] });
+
+        return userEntity;
+    };
 }
