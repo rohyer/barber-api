@@ -37,7 +37,7 @@ export class AuthController {
             httpOnly: true,
             secure: true,
             sameSite: true,
-            maxAge: AUTH.COOKIE_MAX_AGE,
+            maxAge: AUTH.MAX_AGE_7_DAYS,
         });
 
         return successHandler(res, response);
@@ -58,19 +58,21 @@ export class AuthController {
         res.status(200).cookie(AUTH.COOKIE_NAME, token, {
             httpOnly: true,
             secure: true,
-            sameSite: true,
-            maxAge: AUTH.COOKIE_MAX_AGE,
+            sameSite: "strict",
+            maxAge: AUTH.MAX_AGE_7_DAYS,
         });
 
         return successHandler(res, response);
     });
 
     authMe = asyncHandler(async(req: AuthenticatedRequest, res: ExpressResponse) => {
+        const data = await this.authService.getMe(req?.user!.id);
+
         const response = {
             status: 200,
             message: "Autenticação feita com sucesso",
             fromCache: false,
-            data: req?.user,
+            data,
         };
 
         return successHandler(res, response);

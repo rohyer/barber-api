@@ -4,6 +4,9 @@ import { JwtPayload } from "jsonwebtoken";
 import { AuthenticatedRequest } from "../types/express.type.js";
 import { AUTH } from "../../modules/auth/auth.constants.js";
 import { NextFunction, Response } from "express";
+import { JwtService } from "../../modules/auth/jwt.service.js";
+
+const jwtService = new JwtService();
 
 export const protect = asyncHandler(
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -20,11 +23,16 @@ export const protect = asyncHandler(
         try {
             const payload = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
 
-            req.user = {
-                id: payload.id,
-                name: payload.name,
-                email: payload.email,
-            };
+            req.user = { id: payload.id };
+
+            const newToken = jwtService.generateToken(payload.id);
+
+            res.cookie(AUTH.COOKIE_NAME, newToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                maxAge: AUTH.MAX_AGE_7_DAYS,
+            });
 
             next();
         } catch (error) {

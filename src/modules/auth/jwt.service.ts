@@ -1,19 +1,16 @@
 import jwt from "jsonwebtoken";
 import { Barbershop } from "./auth.type.js";
+import { AUTH } from "./auth.constants.js";
 
 export class JwtService {
-    generateToken = (barbershop: Barbershop & { id: number }) => {
+    generateToken = (id: Barbershop["id"]) => {
         if (!process.env.JWT_SECRET) 
             throw new Error("Variável de ambiente não definida");
 
         return jwt.sign(
-            {
-                id: barbershop.id,
-                name: barbershop.name,
-                email: barbershop.email,
-            },
+            { id },
             process.env.JWT_SECRET,
-            { expiresIn: "7d" },
+            { expiresIn: AUTH.EXPIRES_IN_7_DAYS },
         );
     };
     

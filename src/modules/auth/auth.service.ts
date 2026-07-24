@@ -30,7 +30,7 @@ export class AuthService {
         if (!barbershopEntity || !barbershopEntity.data.id)
             throw new Error("Erro ao criar usuário");
         
-        const token = this.jwtService.generateToken(barbershopEntity.data);
+        const token = this.jwtService.generateToken(barbershopEntity.data.id);
 
         return {
             data: barbershopEntity,
@@ -40,25 +40,31 @@ export class AuthService {
 
     loginBarbershop = async(barbershopData: LoginBarbershop) => {
         const isEmailRegistered = await this.authRepository.isEmailRegistered(barbershopData.email);
-
-        if (!isEmailRegistered)
-            throw new Error("E-mail não encontrado");
-    
+        
         const barbershopEntity = await this.authRepository.findUserByEmail(barbershopData.email);
 
-        if (!barbershopEntity)
-            throw new Error("Usuário não encontrado");
+        if (!isEmailRegistered || !barbershopEntity)
+            throw new Error("Credenciais inválidas");
 
         const isCorrectPassword = await this.hashService.compare(barbershopData.password, barbershopEntity.data.password);
 
         if (!isCorrectPassword)
             throw new Error("Senha inválida");
 
-        const token = this.jwtService.generateToken(barbershopEntity.data);
+        const token = this.jwtService.generateToken(barbershopEntity.data.id);
 
         return {
             data: barbershopEntity,
             token,
         };
+    };
+
+    getMe = async(id: Barbershop["id"]) => {
+        const data = await this.authRepository.findUserById(id);
+
+        if (!data)
+            throw new Error("Credenciais inválidas");
+
+        return data;
     };
 }
