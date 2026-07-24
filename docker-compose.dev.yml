@@ -38,6 +38,8 @@ services:
       MARIADB_USER: ${DATABASE_USER}
       MARIADB_PASSWORD: ${DATABASE_PASSWORD}
       MARIADB_DATABASE: ${DATABASE_NAME}
+    ports:
+      - "3306:3306"
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       # - ./permissions.sql:/docker-entrypoint-initdb.d/permissions.sql
