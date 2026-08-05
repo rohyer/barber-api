@@ -60,7 +60,7 @@ export class AuthRepository {
 
     findUserById = async (id: AuthEntityProps["id"]): Promise<AuthEntity | null> => {
         const [result] = await this.db.execute<AuthEntityProps & RowDataPacket[]>(
-            "SELECT id, name, email, password, city, state, phone, premium_expires_at as premiumExpiresAt from admin WHERE id = ? LIMIT 1",
+            "SELECT name, email, city, state, phone, premium_expires_at as premiumExpiresAt from admin WHERE id = ? LIMIT 1",
             [id],
         );
 
