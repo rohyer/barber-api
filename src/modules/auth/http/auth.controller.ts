@@ -66,13 +66,26 @@ export class AuthController {
     });
 
     authMe = asyncHandler(async(req: AuthenticatedRequest, res: ExpressResponse) => {
-        const data = await this.authService.getMe(req?.user!.id);
+        const { data } = await this.authService.getMe(req?.user!.id);
 
         const response = {
             status: 200,
             message: "Autenticação feita com sucesso",
             fromCache: false,
-            data,
+            data: { ...data },
+        };
+
+        return successHandler(res, response);
+    });
+
+    logoutUser = asyncHandler(async(req: AuthenticatedRequest, res: ExpressResponse) => {
+        res.clearCookie(AUTH.COOKIE_NAME);
+
+        const response = {
+            status: 200,
+            message: "Logout feito com sucesso",
+            fromCache: false,
+            data: null,
         };
 
         return successHandler(res, response);

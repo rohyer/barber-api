@@ -37,4 +37,10 @@ router.get(
     (req, res, next) => authController.authMe(req, res, next),
 );
 
+router.post(
+    "/logout",
+    protect,
+    (req, res, next) => authController.logoutUser(req, res, next),
+);
+
 export default router;

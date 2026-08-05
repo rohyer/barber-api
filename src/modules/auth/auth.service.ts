@@ -64,7 +64,7 @@ export class AuthService {
 
         if (!data)
             throw new Error("Credenciais inválidas");
-
+        
         return data;
     };
 }
