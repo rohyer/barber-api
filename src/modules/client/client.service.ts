@@ -2,6 +2,7 @@ import redisClient from "../../shared/config/redis-client.js";
 import { ClientEntity } from "./client.entity.js";
 import { ClientRepository } from "./client.repository.js";
 import { CreateClientDTO, DeleteClientDTO, GetClientsDTO, UpdateClientDTO } from "./client.dto.js";
+import { ApiError } from "../../shared/utils/ApiError.js";
 
 type CreateClientService = CreateClientDTO & {
     idAdmin: number;
@@ -49,9 +50,6 @@ export class ClientService {
             offset,
         });
 
-        if (!queryResult) 
-            return null;
-
         const clients = queryResult.clients.map(client => client.data);
 
         const result = {
@@ -74,9 +72,6 @@ export class ClientService {
             offset,
         });
 
-        if (!queryResult) 
-            return null;
-
         if (data.cacheKey) 
             await redisClient.set(data.cacheKey, JSON.stringify(queryResult), { EX: 300 });
 
@@ -87,10 +82,10 @@ export class ClientService {
         const client = await this.clientRepository.getClientById(data.id);        
 
         if (!client || !client.data.id) 
-            throw new Error("Cliente não encontrado");
+            throw new ApiError("Cliente não encontrado", 404);
 
         if (data.idAdmin !== client.data.idAdmin) 
-            throw new Error("Usuário não autorizado");
+            throw new ApiError("Usuário não autorizado", 404);
 
         client.update({
             name: data.name,
@@ -103,24 +98,24 @@ export class ClientService {
         const updatedClient = await this.clientRepository.updateClient(client);
 
         if (!updatedClient)
-            return null;
+            throw new ApiError("Cliente não encontrado", 404);
 
         const cacheKeys = await redisClient.keys(`client:user:${data.idAdmin}:*`);
 
         if (cacheKeys.length > 0) 
             await redisClient.del(cacheKeys);
 
-        return { data: updatedClient };
+        return updatedClient;
     };
 
     deleteClient = async (data: DeleteClientService) => {
         const client = await this.clientRepository.getClientById(Number(data.id));
 
         if (!client || !client.data.id)
-            throw new Error("Cliente não encontrado!");
+            throw new ApiError("Cliente não encontrado", 404);
 
         if (data.idAdmin !== client.data.idAdmin)
-            throw new Error("Usuário não autorizado!");
+            throw new ApiError("Usuário não autorizado", 404);
 
         const isDeletedClient = await this.clientRepository.deleteClient(client.data.id);
 

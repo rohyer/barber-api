@@ -1,21 +1,27 @@
 import { AuthenticatedRequest } from "../types/express.type.js";
 import { Response as ExpressResponse, NextFunction } from "express";
-import { CreateError } from "../utils/createError.js";
+import { ApiError } from "../utils/ApiError.js";
 
 export const errorHandler = (
-    error: CreateError,
+    error: ApiError,
     req: AuthenticatedRequest,
     res: ExpressResponse,
-    _next: NextFunction,
+    next: NextFunction,
 ) => {
     if (res.headersSent) 
-        return;
+        return next(error);
 
-    const status = error.status || 500;
+    if (error instanceof ApiError) {
+        return res.status(error.status).json({
+            error: {
+                message: error.message,
+            },
+        });
+    }
 
-    res.status(status).json({
-        error: error.name,
-        message: error.message,
-        status,
+    return res.status(500).json({
+        error: {
+            message: "Erro interno do servidor.",
+        },
     });
 };
