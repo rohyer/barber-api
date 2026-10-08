@@ -15,7 +15,7 @@ type GetClientsResponse = {
 export class ClientRepository {
     constructor(private readonly db: Pool) {};
 
-    async getClients({ idAdmin, offset, query }: GetClientsParams): Promise<GetClientsResponse | null> {
+    async getClients({ idAdmin, offset, query }: GetClientsParams): Promise<GetClientsResponse> {
         const [clientRows] = await this.db.execute<(ClientEntityProps & RowDataPacket)[]>(
             "SELECT c.id, c.name, c.sex, c.phone, c.address, c.birth, c.created_at AS createdAt, c.id_admin as idAdmin, MAX(cs.date) AS lastCustomerServiceDate FROM client c LEFT JOIN appointment cs ON c.id = cs.id_client WHERE c.id_admin = ? AND (? = '' OR c.name LIKE CONCAT('%', ?, '%')) GROUP BY c.id, c.name, c.sex, c.phone, c.address, c.birth ORDER BY c.id DESC LIMIT 10 OFFSET ?",
             [idAdmin, query, query, offset],
@@ -36,7 +36,7 @@ export class ClientRepository {
         };
     }
 
-    async getClientsByName({ idAdmin, offset, query }: GetClientsParams): Promise<{ clientRows: ClientEntityProps["name"][] } | null> {
+    async getClientsByName({ idAdmin, offset, query }: GetClientsParams): Promise<{ clientRows: ClientEntityProps["name"][] }> {
         const [clientRows] = await this.db.execute<(ClientEntityProps["name"] & RowDataPacket)[]>(
             "SELECT name FROM client WHERE id_admin = ? AND (? = '' OR name LIKE CONCAT('%', ?, '%')) ORDER BY id DESC LIMIT 10 OFFSET ?",
             [idAdmin, query, query, offset],
