@@ -19,7 +19,7 @@ export class ClientController {
             status: 201,
             message: "Cliente cadastrado com sucesso.",
             fromCache: false,
-            data: { ...result },
+            data: result.data,
         };
 
         successHandler(res, responseData);
@@ -72,7 +72,7 @@ export class ClientController {
         res: ExpressResponse,
         _next: NextFunction,
     ) => {
-        const data = await this.clientService.updateClient({
+        const result = await this.clientService.updateClient({
             ...req.body,
             id: Number(req.params.id),
             idAdmin: req.user!.id,
@@ -82,7 +82,7 @@ export class ClientController {
             status: 200,
             message: "Cliente editado com sucesso.",
             fromCache: false,
-            data,
+            data: result.data,
         };
 
         return successHandler(res, responseData);
@@ -102,7 +102,7 @@ export class ClientController {
             throw new Error("Erro ao deletar cliente");
 
         const responseData = {
-            status: 200,
+            status: 204,
             message: "Cliente deletado com sucesso",
             fromCache: false,
             data: {
