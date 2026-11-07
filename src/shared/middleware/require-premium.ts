@@ -2,29 +2,27 @@ import asyncHandler from "express-async-handler";
 import { Response as ExpressResponse } from "express";
 import { AuthenticatedRequest } from "../types/express.type.js";
 import UserModel from "../../modules/user/user.model.js";
+import { ForbiddenError, UnauthorizedError } from "../utils/ApiError.js";
 
 export const requirePremium = asyncHandler(
-    async (req: AuthenticatedRequest, res: ExpressResponse, next) => {
-        if (!req.user) {
-            res.status(401);
-            throw new Error("User not found.");
-        }
+    async (req: AuthenticatedRequest, _res: ExpressResponse, next) => {
+        if (!req.user)
+            throw new UnauthorizedError("Usuário não autenticado.");
 
-        const user = await UserModel.getUserById(req.user.id);
+        const [user] = await UserModel.getUserById(req.user.id);
 
-        if (user[0].status === 0 || !user[0].premiumExpiresAt) {
-            res.status(401);
-            throw new Error("User does not have access to the resource.");
-        }
+        if (!user)
+            throw new UnauthorizedError("Usuário não encontrado");
 
-        if (user[0].premiumExpiresAt < new Date()) {
+        if (user.status === 0 || !user.premiumExpiresAt)
+            throw new ForbiddenError("Este recurso é exclusivo para usuário premium.");
+
+        if (user.premiumExpiresAt < new Date()) {
             await UserModel.removePremiumAccess(null, req.user.id);
-
-            res.status(401);
-            throw new Error("Premium access expired");
+            throw new ForbiddenError("Seu acesso premium expirou");
         }
 
-        console.log(new Date(user[0].premiumExpiresAt).toISOString());
+        console.log(new Date(user.premiumExpiresAt).toISOString());
         console.log(new Date().toISOString());
 
         next();

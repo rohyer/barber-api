@@ -8,7 +8,7 @@ import { ApiError } from "../utils/ApiError.js";
 
 export const errorHandler: ErrorRequestHandler = (
     error: ApiError,
-    _req: ExpressRequest,
+    req: ExpressRequest,
     res: ExpressResponse,
     next: NextFunction,
 ): void | Promise<void> => {
@@ -20,15 +20,16 @@ export const errorHandler: ErrorRequestHandler = (
     if (error instanceof ApiError) {
         res.status(error.status).json({
             error: {
+                success: false,
                 message: error.message,
             },
         });
         return;
     }
 
+    console.error(`[${req.method}] ${req.originalUrl}`, error);
+
     res.status(500).json({
-        error: {
-            message: "Erro interno do servidor.",
-        },
+        error: { message: "Erro interno do servidor." },
     });
 };

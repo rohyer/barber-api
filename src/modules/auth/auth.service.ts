@@ -2,6 +2,7 @@ import { AuthRepository } from "./auth.repository.js";
 import { JwtService } from "./jwt.service.js";
 import { Barbershop, LoginBarbershop } from "./auth.type.js";
 import { HashService } from "./hash.service.js";
+import { UnauthorizedError } from "../../shared/utils/ApiError.js";
 
 export class AuthService {
     constructor(
@@ -44,12 +45,12 @@ export class AuthService {
         const barbershopEntity = await this.authRepository.findUserByEmail(barbershopData.email);
 
         if (!isEmailRegistered || !barbershopEntity)
-            throw new Error("Credenciais inválidas");
+            throw new UnauthorizedError("E-mail ou senha inválidos.");
 
         const isCorrectPassword = await this.hashService.compare(barbershopData.password, barbershopEntity.data.password);
 
         if (!isCorrectPassword)
-            throw new Error("Senha inválida");
+            throw new UnauthorizedError("E-mail ou senha inválidos.");
 
         const token = this.jwtService.generateToken(barbershopEntity.data.id);
 

@@ -11,7 +11,7 @@ import clientRouter from "./modules/client/client.routes.js";
 import customerServiceRouter from "./modules/customer-service/customer-service.routes.js";
 import statisticsRouter from "./modules/statistics/statistics.routes.js";
 import cors, { CorsOptions } from "cors";
-import { errorHandler } from "./shared/middleware/error.js";
+import { errorHandler } from "./shared/middleware/error-handler.js";
 import cookieParser from "cookie-parser";
 
 const port = process.env.PORT || 5000;
