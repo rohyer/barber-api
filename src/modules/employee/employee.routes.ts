@@ -2,10 +2,10 @@ import express from "express";
 
 const router = express.Router();
 import { EmployeeController } from "./employee.controller.js";
-import { protect } from "../../shared/middleware/protect.js";
-import { cacheMiddleware } from "../../shared/middleware/cache.js";
+import { authenticate } from "../../shared/middleware/authenticate.js";
+import { cacheResponse } from "../../shared/middleware/cache-response.js";
 import getDatabaseConnection from "../../shared/config/db.js";
-import { validateRequest } from "../../shared/middleware/validateRequest.js";
+import { validateRequest } from "../../shared/middleware/validate-request.js";
 import { CreateEmployeeSchema, GetEmployeeSchema, ParamsSchema } from "./employee.dto.js";
 import { EmployeeRepository } from "./employee.repository.js";
 import { EmployeeService } from "./employee.service.js";
@@ -18,29 +18,29 @@ const employeeController = new EmployeeController(employeeService);
 
 router.get(
     "/options",
-    protect,
-    cacheMiddleware("employee"),
+    authenticate,
+    cacheResponse("employee"),
     (req, res, next) => employeeController.getEmployeeOptions(req, res, next),
 );
 
 router.get(
     "/",
-    protect,
+    authenticate,
     validateRequest(GetEmployeeSchema, "query"),
-    cacheMiddleware("employee"),
+    cacheResponse("employee"),
     (req, res, next) => employeeController.getEmployees(req, res, next),
 );
 
 router.post(
     "/",
-    protect,
+    authenticate,
     validateRequest(CreateEmployeeSchema),
     (req, res, next) => employeeController.registerEmployee(req, res, next),
 );
 
 router.put(
     "/:id",
-    protect,
+    authenticate,
     validateRequest(CreateEmployeeSchema),
     validateRequest(ParamsSchema, "params"),
     (req, res, next) => employeeController.updateEmployee(req, res, next),
@@ -48,7 +48,7 @@ router.put(
 
 router.delete(
     "/:id",
-    protect,
+    authenticate,
     validateRequest(ParamsSchema, "params"),
     (req, res, next) => employeeController.deleteEmployee(req, res, next),
 );

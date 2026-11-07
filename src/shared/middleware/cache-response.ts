@@ -3,7 +3,7 @@ import { AuthenticatedRequest } from "../types/express.type.js";
 import { Response as ExpressResponse, NextFunction } from "express";
 import { successHandler } from "../utils/successHandler.js";
 
-export const cacheMiddleware = (prefix: string) => {
+export const cacheResponse = (prefix: string) => {
     return async (req: AuthenticatedRequest, res: ExpressResponse, next: NextFunction) => {
         if (!req.user) {
             res.status(401);

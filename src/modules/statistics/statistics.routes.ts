@@ -1,10 +1,10 @@
 import express from "express";
-import { protect } from "../../shared/middleware/protect.js";
+import { authenticate } from "../../shared/middleware/authenticate.js";
 import { getAllStatisticsController } from "./statistics.controller.js";
-import { protectPremium } from "../../shared/middleware/auth-premium.js";
+import { requirePremium } from "../../shared/middleware/require-premium.js";
 
 const router = express.Router();
 
-router.get("/", protect, protectPremium, getAllStatisticsController);
+router.get("/", authenticate, requirePremium, getAllStatisticsController);
 
 export default router;

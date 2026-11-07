@@ -1,9 +1,9 @@
 import express from "express";
 const router = express.Router();
-import { protect } from "../../shared/middleware/protect.js";
-import { cacheMiddleware } from "../../shared/middleware/cache.js";
+import { authenticate } from "../../shared/middleware/authenticate.js";
+import { cacheResponse } from "../../shared/middleware/cache-response.js";
 import { OfferingController } from "./offering.controller.js";
-import { validateRequest } from "../../shared/middleware/validateRequest.js";
+import { validateRequest } from "../../shared/middleware/validate-request.js";
 import { CreateOfferingSchema, GetOfferingSchema, ParamsSchema, UpdateOfferingSchema } from "./offering.dto.js";
 import { OfferingRepository } from "./offering.repository.js";
 import { OfferingService } from "./offering.service.js";
@@ -17,29 +17,29 @@ const offeringController = new OfferingController(offeringService);
 
 router.get(
     "/",
-    protect,
-    cacheMiddleware("offering"),
+    authenticate,
+    cacheResponse("offering"),
     validateRequest(GetOfferingSchema, "query"),
     (req, res, next) => offeringController.getOfferings(req, res, next),
 );
 
 router.post(
     "/",
-    protect,
+    authenticate,
     validateRequest(CreateOfferingSchema),
     (req, res, next) => offeringController.registerOffering(req, res, next),
 );
 
 router.put(
     "/:id",
-    protect,
+    authenticate,
     validateRequest(UpdateOfferingSchema),
     (req, res, next) => offeringController.updateOffering(req, res, next),
 );
 
 router.delete(
     "/:id",
-    protect,
+    authenticate,
     validateRequest(ParamsSchema, "params"),
     (req, res, next) => offeringController.deleteOffering(req, res, next),
 );

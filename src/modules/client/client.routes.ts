@@ -1,12 +1,12 @@
 import express from "express";
 const router = express.Router();
-import { protect } from "../../shared/middleware/protect.js";
-import { cacheMiddleware } from "../../shared/middleware/cache.js";
+import { authenticate } from "../../shared/middleware/authenticate.js";
+import { cacheResponse } from "../../shared/middleware/cache-response.js";
 import { ClientService } from "./client.service.js";
 import { ClientController } from "./client.controller.js";
 import { ClientRepository } from "./client.repository.js";
 import getDatabaseConnection from "../../shared/config/db.js";
-import { validateRequest } from "../../shared/middleware/validateRequest.js";
+import { validateRequest } from "../../shared/middleware/validate-request.js";
 import { CreateClientSchema, GetClientsSchema, ParamsSchema, UpdateClientSchema } from "./client.dto.js";
 
 const db = getDatabaseConnection();
@@ -17,30 +17,30 @@ const clientController = new ClientController(clientService);
 
 router.get(
     "/",
-    protect,
+    authenticate,
     validateRequest(GetClientsSchema, "query"),
-    cacheMiddleware("client"),
+    cacheResponse("client"),
     (req, res, next) => clientController.getClients(req, res, next),
 );
 
 router.get(
     "/options",
-    protect,
+    authenticate,
     validateRequest(GetClientsSchema, "query"),
-    cacheMiddleware("client"),
+    cacheResponse("client"),
     (req, res, next) => clientController.getClientsByName(req, res, next),
 );
 
 router.post(
     "/",
-    protect,
+    authenticate,
     validateRequest(CreateClientSchema),
     (req, res, next) => clientController.createClient(req, res, next),
 );
 
 router.put(
     "/:id",
-    protect,
+    authenticate,
     validateRequest(UpdateClientSchema),
     validateRequest(ParamsSchema, "params"),
     (req, res, next) => clientController.updateClient(req, res, next),
@@ -48,7 +48,7 @@ router.put(
 
 router.delete(
     "/:id",
-    protect,
+    authenticate,
     validateRequest(ParamsSchema, "params"),
     (req, res, next) => clientController.deleteClient(req, res, next),
 );

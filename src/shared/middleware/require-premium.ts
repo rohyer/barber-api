@@ -3,7 +3,7 @@ import { Response as ExpressResponse } from "express";
 import { AuthenticatedRequest } from "../types/express.type.js";
 import UserModel from "../../modules/user/user.model.js";
 
-export const protectPremium = asyncHandler(
+export const requirePremium = asyncHandler(
     async (req: AuthenticatedRequest, res: ExpressResponse, next) => {
         if (!req.user) {
             res.status(401);

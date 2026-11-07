@@ -6,15 +6,15 @@ import {
     updateCustomerService,
     deleteCustomerService,
 } from "./customer-service.controller.js";
-import { protect } from "../../shared/middleware/protect.js";
-import { cacheMiddleware } from "../../shared/middleware/cache.js";
+import { authenticate } from "../../shared/middleware/authenticate.js";
+import { cacheResponse } from "../../shared/middleware/cache-response.js";
 
-router.get("/", protect, cacheMiddleware("customer-service"), getCustomerServices);
+router.get("/", authenticate, cacheResponse("customer-service"), getCustomerServices);
 
-router.post("/", protect, setCustomerService);
+router.post("/", authenticate, setCustomerService);
 
-router.put("/:id", protect, updateCustomerService);
+router.put("/:id", authenticate, updateCustomerService);
 
-router.delete("/:id", protect, deleteCustomerService);
+router.delete("/:id", authenticate, deleteCustomerService);
 
 export default router;

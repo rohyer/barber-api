@@ -8,7 +8,7 @@ export const registerBarbershopSchema = z.object({
     city: z.string(),
     state: z.string(),
     phone: z.string(),
-}) satisfies z.ZodType<Barbershop>;
+}) satisfies z.ZodType<Omit<Barbershop, "id">>;
 
 export const registerBarbershopInputSchema = registerBarbershopSchema
     .extend({ passwordConfirm: z.string() })

@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { validateRequest } from "../../../shared/middleware/validateRequest.js";
+import { validateRequest } from "../../../shared/middleware/validate-request.js";
 import { loginBarbershopSchema, registerBarbershopInputSchema } from "./auth.request.dto.js";
 import { AuthController } from "./auth.controller.js";
 import { AuthService } from "../auth.service.js";
@@ -8,7 +8,7 @@ import { AuthRepository } from "../auth.repository.js";
 import getDatabaseConnection from "../../../shared/config/db.js";
 import { JwtService } from "../jwt.service.js";
 import { HashService } from "../hash.service.js";
-import { protect } from "../../../shared/middleware/protect.js";
+import { authenticate } from "../../../shared/middleware/authenticate.js";
 
 const db = getDatabaseConnection();
 
@@ -33,13 +33,13 @@ router.post(
 
 router.get(
     "/me",
-    protect,
+    authenticate,
     (req, res, next) => authController.authMe(req, res, next),
 );
 
 router.post(
     "/logout",
-    protect,
+    authenticate,
     (req, res, next) => authController.logoutUser(req, res, next),
 );
 

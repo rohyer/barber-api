@@ -8,7 +8,7 @@ import { JwtService } from "../../modules/auth/jwt.service.js";
 
 const jwtService = new JwtService();
 
-export const protect = asyncHandler(
+export const authenticate = asyncHandler(
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         const token = req.cookies[AUTH.COOKIE_NAME];
 

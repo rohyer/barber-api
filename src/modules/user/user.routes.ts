@@ -1,16 +1,16 @@
 import express from "express";
 const router = express.Router();
-import { protect } from "../../shared/middleware/protect.js";
+import { authenticate } from "../../shared/middleware/authenticate.js";
 import {
     updateUserData,
     updateUserPassword,
     updateUserEmail,
 } from "./user.controller.js";
 
-router.put("/:id", protect, updateUserData);
+router.put("/:id", authenticate, updateUserData);
 
-router.put("/password/:id", protect, updateUserPassword);
+router.put("/password/:id", authenticate, updateUserPassword);
 
-router.put("/email/:id", protect, updateUserEmail);
+router.put("/email/:id", authenticate, updateUserEmail);
 
 export default router;
